@@ -1,26 +1,84 @@
 # sonarqube-axi
 
-AXI-compliant CLI for SonarQube — token-efficient TOON output, contextual
-suggestions, targeted mutations. Built on the [glab-axi](https://github.com/ayfgallardo/glab-axi)
-architecture.
+SonarQube CLI for agents — designed with [AXI](https://github.com/kunchenguid/axi) (Agent eXperience Interface).
 
-## Status
-
-Work in progress — skeleton only, no commands yet.
+Wraps the SonarQube Web API directly (no third-party Sonar client) with token-efficient TOON output, contextual next-step suggestions, and structured AXI error handling. Built on the [glab-axi](https://github.com/ayfgallardo/glab-axi) architecture. Prefer this over raw `curl` calls against the SonarQube Web API.
 
 ## Install
 
+Not published on npm — install from source:
+
 ```sh
+git clone https://github.com/ayfgallardo/sonarqube-axi
+cd sonarqube-axi
 pnpm install
+pnpm build
+npm install -g .
 ```
 
-## Development
+### Prerequisites
+
+- Node.js 20 or newer.
+- [`glab`](https://gitlab.com/gitlab-org/cli) installed and authenticated (`glab auth login`) — used to resolve the project's Sonar project key and CI token from GitLab CI/CD variables, and to detect an open MR for the current branch.
+- macOS Keychain, for a personal token (only needed for `hotspots`, `analysis` on a locked-down project, and the triage commands).
+
+## Setup
+
+Run once per machine:
 
 ```sh
-pnpm build
-pnpm test
-pnpm lint
+sonarqube-axi setup --host https://sonar.example.com
 ```
+
+Add `--insecure` for a self-signed server certificate. This writes `~/.config/sonarqube-axi/config.json`. Per-project setup is automatic: the Sonar project key and CI token are read from the GitLab repo's `SONAR_PROJECTKEY` and `SONAR_TOKEN` CI/CD variables via `glab`, cached per repo in `~/.config/sonarqube-axi/context-cache.json`.
+
+For hotspots, the compute-engine analysis status, and triage, register a personal token in the macOS Keychain:
+
+```sh
+security add-generic-password -s sonar-geofoncier -a "$USER" -w
+```
+
+(`--keychain-service <name>` on `setup` to use a different service name.)
+
+## Commands
+
+Run from within the repository whose analysis you want to inspect.
+
+| Command                                                                                                        | Purpose                                                                                                   |
+| -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `sonarqube-axi`                                                                                                | Dashboard: quality gate + counts at a glance for the current context.                                     |
+| `sonarqube-axi qg [--mr <IID> or --branch]`                                                                    | Quality gate status. Defaults to MR mode when an open MR exists for the current branch, else branch mode. |
+| `sonarqube-axi issues [--mr <IID> or --branch] [--all]`                                                        | New issues (or all of them with `--all`; `--full` shows untruncated messages).                            |
+| `sonarqube-axi hotspots [--mr <IID> or --branch]`                                                              | Security hotspots `TO_REVIEW`.                                                                            |
+| `sonarqube-axi analysis`                                                                                       | Compute-engine task status for the last analysis.                                                         |
+| `sonarqube-axi hotspot review <KEY> --safe (or --fixed or --ack) [-m "comment"]`                               | Resolve a hotspot review. Mutation.                                                                       |
+| `sonarqube-axi issue transition <KEY> <accept or falsepositive> -m "motif"`                                    | Transition an issue. Mutation.                                                                            |
+| `sonarqube-axi api <path> [key=value ...] [--method <verb>] [--allow-mutation] [--personal]`                   | Raw SonarQube Web API call, same AXI conventions.                                                         |
+| `sonarqube-axi setup [--host <url>] [--insecure or --no-insecure] [--keychain-service <name>] [--clear-cache]` | Configure or inspect the local host/token setup.                                                          |
+
+Run `sonarqube-axi --help` or `sonarqube-axi <command> --help` for exact flags.
+
+## Encoded traps
+
+A few behaviors that don't show up from the command names alone:
+
+- **A green quality gate can be stale.** `qg` reads the _last computed_ gate; if the compute-engine task for the most recent push hasn't finished, the gate you see predates it. Run `analysis` first when the timing matters.
+- **A green gate can also be non-conclusive.** `qg` flags `ignoredConditions: true` explicitly — SonarQube skips new-code conditions on a changeset too small to evaluate meaningfully (~<20 new lines), and a plain `OK` there would misrepresent an unevaluated gate as a pass.
+- **MR mode vs branch mode.** `qg`/`issues`/`hotspots` default to MR mode when an open MR exists for the current branch (via `glab`), branch mode otherwise. `--mr <IID>` or `--branch` overrides the default; the two modes read different SonarQube resources (pull-request vs branch parameters) and can disagree. Branch mode is also cumulative since the last new-code period, not scoped to one merge request.
+- **Token fallback.** The project CI token can read the quality gate and issues but not hotspots or the compute-engine task status — `hotspots` and `analysis` retry automatically with the personal Keychain token on a 403 (`--personal` does the same on `api`). `hotspot review` and `issue transition` always use the personal token.
+- **Auth scheme fallback.** Every request tries a Bearer token first, then falls back to HTTP Basic (token as login, empty password) on a 401 — needed for SonarQube versions predating Bearer support.
+
+## Benchmark
+
+Tokens (`o200k_base`, via `gpt-tokenizer`) of the equivalent raw SonarQube API JSON vs `sonarqube-axi` output, on the three read commands with the richest payloads. Fixtures in `scripts/fixtures/` are synthetic (fabricated file paths, dates and identifiers) but reproduce the shape and volume of a real project's response (e.g. 29 hotspots across 8 files) so the comparison stays representative; rerun with `pnpm bench`.
+
+| Commande | Tokens curl brut | Tokens sonarqube-axi | Delta % | Note                                                     |
+| -------- | ---------------- | -------------------- | ------- | -------------------------------------------------------- |
+| qg       | 446              | 132                  | -70.4%  |                                                          |
+| issues   | 78               | 26                   | -66.7%  | paire quasi vide (0 nouvelle issue sur ce projet à date) |
+| hotspots | 9206             | 1571                 | -82.9%  |                                                          |
+
+Delta médian : -70.4 %. `hotspots` saves the most: SonarQube's raw hotspot payload carries per-item fields (`textRange`, `flows`, `author`, `assignee`, timestamps) that a triage workflow never reads — `sonarqube-axi` keeps only key, file, line, message, probability and category.
 
 ## License
 
