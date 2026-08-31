@@ -1,4 +1,12 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const FIXTURES_DIR = fileURLToPath(new URL("fixtures/", import.meta.url));
+
+function fixture<T>(name: string): T {
+  return JSON.parse(readFileSync(`${FIXTURES_DIR}${name}`, "utf-8")) as T;
+}
 
 const execFileMock = vi.fn();
 
@@ -48,7 +56,7 @@ describe("resolveMode", () => {
   });
 
   it("defaults to MR mode when an open MR exists for the current branch", async () => {
-    stub({ mrs: [{ iid: 42 }] });
+    stub({ mrs: fixture("glab-mr-list-open.json") });
 
     const { mode } = await resolveMode([], undefined, REPO_PATH);
 
