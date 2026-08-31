@@ -18,6 +18,12 @@ describe("mapSonarError", () => {
     expect(error.code).toBe("NOT_FOUND");
   });
 
+  it("points a 401 at the context cache, since a rotated credential is cached", () => {
+    const help = mapSonarError(401, {}, "issues/search").suggestions.join(" ");
+
+    expect(help).toContain("context-cache.json");
+  });
+
   it("maps 401 to AUTH_REQUIRED with a token hint", () => {
     const error = mapSonarError(
       401,
@@ -74,6 +80,19 @@ describe("mapNetworkError", () => {
     expect(error.code).toBe("NETWORK_ERROR");
     expect(error.suggestions.join(" ")).toContain("insecure");
     expect(error.suggestions.join(" ")).toContain("sonarqube-axi setup");
+  });
+
+  it("survives a throwable that is not an object", () => {
+    const error = mapNetworkError("boom", "https://sonar.example.com");
+
+    expect(error.code).toBe("NETWORK_ERROR");
+    expect(error.message).toContain("boom");
+  });
+
+  it("survives a null throwable", () => {
+    expect(mapNetworkError(null, "https://sonar.example.com").code).toBe(
+      "NETWORK_ERROR",
+    );
   });
 
   it("reports an unreachable host without the certificate hint", () => {

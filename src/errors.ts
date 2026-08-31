@@ -16,6 +16,8 @@ export { AxiError, exitCodeForError };
 const AUTH_HELP = [
   "Le jeton est invalide ou expiré — régénérer un jeton SonarQube",
   "Jeton projet : variable CI SONAR_TOKEN ; jeton personnel : Trousseau macOS",
+  // A rotated SONAR_TOKEN keeps failing until the per-repo cache is dropped.
+  "Après rotation, vider ~/.config/sonarqube-axi/context-cache.json",
 ];
 
 const FORBIDDEN_HELP = [
@@ -64,8 +66,14 @@ const TLS_CODES = new Set([
 ]);
 
 export function mapNetworkError(error: unknown, host: string): AxiError {
-  const cause = (error as { cause?: unknown }).cause;
-  const code = (cause as { code?: unknown })?.code;
+  const cause =
+    typeof error === "object" && error !== null
+      ? (error as { cause?: unknown }).cause
+      : undefined;
+  const code =
+    typeof cause === "object" && cause !== null
+      ? (cause as { code?: unknown }).code
+      : undefined;
   const detail =
     cause instanceof Error
       ? cause.message

@@ -95,8 +95,17 @@ async function ciVariable(name: string, repoPath: string): Promise<string> {
   let value: string;
   try {
     value = await run("glab", ["variable", "get", name, "-R", repoPath]);
-  } catch {
-    value = "";
+  } catch (error) {
+    // A failing `glab` (absent, logged out, no access) is not an absent
+    // variable, and the remedies have nothing in common.
+    throw new AxiError(
+      `Lecture de la variable CI ${name} sur ${repoPath} impossible : ${commandFailure(error)}`,
+      "CONTEXT_MISSING",
+      [
+        "Vérifier l'accès GitLab : glab auth status",
+        "Vérifier que la CLI est installée : glab --version",
+      ],
+    );
   }
 
   if (!value) {
@@ -112,15 +121,29 @@ async function ciVariable(name: string, repoPath: string): Promise<string> {
   return value;
 }
 
+/** The stderr of a failed subprocess, or its message when it produced none. */
+function commandFailure(error: unknown): string {
+  const stderr = (error as { stderr?: unknown }).stderr;
+  if (typeof stderr === "string" && stderr.trim() !== "") {
+    return stderr.trim();
+  }
+  return error instanceof Error ? error.message : String(error);
+}
+
 function run(file: string, args: string[], cwd?: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    execFile(file, args, { cwd: cwd ?? process.cwd() }, (error, stdout) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-      resolve(stdout.trim());
-    });
+    execFile(
+      file,
+      args,
+      { cwd: cwd ?? process.cwd() },
+      (error, stdout, stderr) => {
+        if (error) {
+          reject(Object.assign(error, { stderr }));
+          return;
+        }
+        resolve(stdout.trim());
+      },
+    );
   });
 }
 

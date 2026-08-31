@@ -127,7 +127,9 @@ describe("sonar transport", () => {
   });
 
   it("gives up after the Basic fallback also returns 401", async () => {
-    fetchMock.mockResolvedValue(
+    // A fresh Response per call: the transport drains the rejected body before
+    // retrying, so a shared instance would be unusable on the second read.
+    fetchMock.mockImplementation(async () =>
       jsonResponse(401, { errors: [{ msg: "Unauthorized" }] }),
     );
 

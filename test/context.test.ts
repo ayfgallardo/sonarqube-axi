@@ -34,6 +34,8 @@ function stubRepo(
     origin?: string;
     projectKey?: string | Error;
     token?: string | Error;
+    /** What the failing glab wrote on stderr. */
+    stderr?: string;
   } = {},
 ): void {
   execFileMock.mockImplementation(
@@ -54,7 +56,7 @@ function stubRepo(
             ? (overrides.projectKey ?? PROJECT_KEY)
             : (overrides.token ?? FAKE_TOKEN);
         if (value instanceof Error) {
-          callback(value, "", "variable not found");
+          callback(value, "", overrides.stderr ?? "");
           return;
         }
         callback(null, `${value}\n`, "");
@@ -174,8 +176,8 @@ describe("resolveProjectContext", () => {
     ).toHaveLength(2);
   });
 
-  it("guides the user when SONAR_PROJECTKEY is missing", async () => {
-    stubRepo({ projectKey: new Error("variable not found") });
+  it("guides the user when SONAR_PROJECTKEY is absent", async () => {
+    stubRepo({ projectKey: "" });
 
     let thrown: unknown;
     try {
@@ -187,17 +189,55 @@ describe("resolveProjectContext", () => {
     expect(thrown).toBeInstanceOf(AxiError);
     const error = thrown as InstanceType<typeof AxiError>;
     expect(error.code).toBe("CONTEXT_MISSING");
+    expect(error.message).toContain("absente");
     expect(error.message).toContain("SONAR_PROJECTKEY");
     expect(error.message).toContain(REPO_PATH);
     expect(error.suggestions.join(" ")).toContain("glab variable set");
   });
 
-  it("guides the user when SONAR_TOKEN is missing", async () => {
-    stubRepo({ token: new Error("variable not found") });
+  it("guides the user when SONAR_TOKEN is absent", async () => {
+    stubRepo({ token: "" });
 
     await expect(resolveProjectContext()).rejects.toMatchObject({
       code: "CONTEXT_MISSING",
     });
+  });
+
+  it("reports a failing glab as a command failure, not an absent variable", async () => {
+    stubRepo({
+      projectKey: new Error("exit status 1"),
+      stderr: "You are not logged in",
+    });
+
+    let thrown: unknown;
+    try {
+      await resolveProjectContext();
+    } catch (error) {
+      thrown = error;
+    }
+
+    const error = thrown as InstanceType<typeof AxiError>;
+    expect(error.code).toBe("CONTEXT_MISSING");
+    expect(error.message).toContain("You are not logged in");
+    expect(error.message).not.toContain("absente");
+    const help = error.suggestions.join(" ");
+    expect(help).toContain("glab auth status");
+    expect(help).not.toContain("glab variable set");
+  });
+
+  it("falls back to the process error when glab printed no stderr", async () => {
+    stubRepo({ projectKey: new Error("spawn glab ENOENT"), stderr: "" });
+
+    await expect(resolveProjectContext()).rejects.toMatchObject({
+      message: expect.stringContaining("spawn glab ENOENT"),
+    });
+  });
+
+  it("does not cache anything when a lookup fails", async () => {
+    stubRepo({ token: "" });
+
+    await expect(resolveProjectContext()).rejects.toThrow();
+    expect(() => readFileSync(cachePath(), "utf-8")).toThrow();
   });
 
   it("fails with a clear message outside a git repository", async () => {

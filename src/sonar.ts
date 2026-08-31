@@ -81,6 +81,8 @@ async function request<T>(
   // token then works as a Basic login with an empty password.
   let response = await send(bearerAuthHeader(options.token));
   if (response.status === 401) {
+    // Drain the discarded body so the connection returns to the pool.
+    await response.text().catch(() => undefined);
     response = await send(basicAuthHeader(options.token));
   }
 

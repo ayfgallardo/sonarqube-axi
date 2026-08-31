@@ -15,8 +15,13 @@ vi.mock("../src/context.js", () => ({
   }),
 }));
 
-const { COMMAND_NAMES, TOP_HELP, main, parseSonarContextArgs } =
-  await import("../src/cli.js");
+const {
+  COMMAND_NAMES,
+  TOP_HELP,
+  main,
+  parseSonarContextArgs,
+  withStrippedArgs,
+} = await import("../src/cli.js");
 
 function capture(): {
   stdout: { write: (chunk: string) => void };
@@ -76,6 +81,30 @@ describe("cli surface", () => {
 
   it("reports an unknown command", async () => {
     expect(await run(["nope"])).toMatch(/nope/);
+  });
+});
+
+describe("context flags never reach a handler", () => {
+  it("hides --mr from the command that runs", async () => {
+    // The stub echoes the args it was handed, so this asserts what a real
+    // Task 2 handler will actually receive.
+    const output = await run(["qg", "--mr", "42", "--json"]);
+
+    expect(output).not.toContain("--mr");
+    expect(output).not.toContain("42");
+    expect(output).toContain("--json");
+  });
+
+  it("hides the equals form too", async () => {
+    expect(await run(["issues", "--mr=42"])).not.toContain("--mr");
+  });
+
+  it("passes the stripped args through withStrippedArgs", async () => {
+    const handler = vi.fn(async () => "ok");
+
+    await withStrippedArgs(handler)(["list", "--mr", "42", "--all"], undefined);
+
+    expect(handler).toHaveBeenCalledWith(["list", "--all"], undefined);
   });
 });
 

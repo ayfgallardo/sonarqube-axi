@@ -64,11 +64,23 @@ type CommandFn = (
 
 /** Placeholder until tasks 2 and 3 land the real handlers. */
 function notImplementedYet(name: string): CommandFn {
-  return async () => encode({ command: name, statut: "pas encore implémenté" });
+  return async (args) =>
+    encode({ command: name, args, statut: "pas encore implémenté" });
+}
+
+/**
+ * `resolveContext` reads --mr out of the args, but the SDK hands the handler
+ * the raw argv, so every command is wrapped to see only the flags it owns.
+ */
+export function withStrippedArgs(handler: CommandFn): CommandFn {
+  return (args, ctx) => handler(parseSonarContextArgs(args).strippedArgs, ctx);
 }
 
 const COMMANDS: Record<string, CommandFn> = Object.fromEntries(
-  COMMAND_NAMES.map((name) => [name, notImplementedYet(name)]),
+  COMMAND_NAMES.map((name) => [
+    name,
+    withStrippedArgs(notImplementedYet(name)),
+  ]),
 );
 
 export async function main(options: MainOptions = {}): Promise<void> {
@@ -78,7 +90,7 @@ export async function main(options: MainOptions = {}): Promise<void> {
     version: VERSION,
     topLevelHelp: TOP_HELP,
     ...(options.stdout ? { stdout: options.stdout } : {}),
-    home: notImplementedYet("home"),
+    home: withStrippedArgs(notImplementedYet("home")),
     commands: COMMANDS,
     getCommandHelp: (command) => COMMAND_HELP[command],
     formatError: (error) => {
