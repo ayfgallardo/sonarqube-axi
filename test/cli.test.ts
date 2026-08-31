@@ -39,9 +39,18 @@ vi.mock("../src/sonar.js", () => ({
 const hotspotCommandMock = vi.fn(async (args: string[]) =>
   JSON.stringify({ args }),
 );
+const issueCommandMock = vi.fn(async () => "ok");
 vi.mock("../src/commands/triage.js", () => ({
   hotspotCommand: hotspotCommandMock,
-  issueCommand: vi.fn(async () => "ok"),
+  issueCommand: issueCommandMock,
+}));
+
+const apiCommandMock = vi.fn(async () => "ok");
+vi.mock("../src/commands/api.js", () => ({ apiCommand: apiCommandMock }));
+
+const setupCommandMock = vi.fn(async () => "ok");
+vi.mock("../src/commands/setup.js", () => ({
+  setupCommand: setupCommandMock,
 }));
 
 const {
@@ -104,6 +113,23 @@ describe("cli surface", () => {
 
   it("reports an unknown command", async () => {
     expect(await run(["nope"])).toMatch(/nope/);
+  });
+
+  it("wires hotspot, issue, api and setup to their real handlers", async () => {
+    hotspotCommandMock.mockClear();
+    issueCommandMock.mockClear();
+    apiCommandMock.mockClear();
+    setupCommandMock.mockClear();
+
+    await run(["hotspot", "review", "AY0001", "--safe"]);
+    await run(["issue", "transition", "AY0001", "accept", "-m", "motif"]);
+    await run(["api", "issues/search"]);
+    await run(["setup"]);
+
+    expect(hotspotCommandMock).toHaveBeenCalledTimes(1);
+    expect(issueCommandMock).toHaveBeenCalledTimes(1);
+    expect(apiCommandMock).toHaveBeenCalledTimes(1);
+    expect(setupCommandMock).toHaveBeenCalledTimes(1);
   });
 });
 
