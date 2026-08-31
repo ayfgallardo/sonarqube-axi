@@ -41,7 +41,7 @@ const table: SuggestionEntry[] = [
   {
     match: (c) => c.domain === "issues",
     lines: () => [
-      'Run `sonarqube-axi issue transition <KEY> <falsepositive|wontfix> "motif"` to triage one',
+      'Run `sonarqube-axi issue transition <KEY> <accept|falsepositive> -m "motif"` to triage one',
     ],
   },
 
@@ -49,7 +49,7 @@ const table: SuggestionEntry[] = [
   {
     match: (c) => c.domain === "hotspots" && (c.remaining ?? 0) > 0,
     lines: () => [
-      'Run `sonarqube-axi hotspot review <KEY> <SAFE|FIXED> "motif"` to review one',
+      'Run `sonarqube-axi hotspot review <KEY> --safe|--fixed|--ack -m "motif"` to review one',
     ],
   },
   {
@@ -61,6 +61,16 @@ const table: SuggestionEntry[] = [
   {
     match: (c) => c.domain === "analysis",
     lines: () => ["Run `sonarqube-axi qg` once the analysis finishes"],
+  },
+
+  // Triage
+  {
+    match: (c) => c.domain === "hotspot-review",
+    lines: () => ["Run `sonarqube-axi hotspots` to see the remaining hotspots"],
+  },
+  {
+    match: (c) => c.domain === "issue-transition",
+    lines: () => ["Run `sonarqube-axi issues` to see the remaining issues"],
   },
 ];
 
