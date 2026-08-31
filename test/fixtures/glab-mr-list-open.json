@@ -1,0 +1,9 @@
+[
+  {
+    "iid": 42,
+    "title": "Add example feature",
+    "source_branch": "feature/example",
+    "target_branch": "main",
+    "state": "opened"
+  }
+]
