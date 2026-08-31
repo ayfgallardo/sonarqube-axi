@@ -2,9 +2,19 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 class FakeAgent {
   constructor(readonly options: unknown) {}
+  compose(...interceptors: unknown[]): this {
+    (this as unknown as { interceptors: unknown[] }).interceptors =
+      interceptors;
+    return this;
+  }
 }
 
-vi.mock("undici", () => ({ Agent: FakeAgent }));
+const decompressMock = vi.fn(() => "decompress-interceptor");
+
+vi.mock("undici", () => ({
+  Agent: FakeAgent,
+  interceptors: { decompress: decompressMock },
+}));
 
 const { sonarGet, sonarPost } = await import("../src/sonar.js");
 const { AxiError } = await import("../src/errors.js");
@@ -199,6 +209,22 @@ describe("sonar transport", () => {
       connect: { rejectUnauthorized: false },
     });
     expect(process.env["NODE_TLS_REJECT_UNAUTHORIZED"]).toBe(before);
+  });
+
+  it("composes the dispatcher with a decompress interceptor when insecure", async () => {
+    fetchMock.mockResolvedValue(jsonResponse(200, {}));
+
+    await sonarGet(
+      "system/status",
+      {},
+      { token: TOKEN, host: HOST, insecure: true },
+    );
+
+    const dispatcher = (lastCall()[1] as { dispatcher?: FakeAgent }).dispatcher;
+    expect(decompressMock).toHaveBeenCalled();
+    expect(
+      (dispatcher as unknown as { interceptors: unknown[] }).interceptors,
+    ).toEqual(["decompress-interceptor"]);
   });
 
   it("sends no dispatcher when TLS verification stays on", async () => {

@@ -1,4 +1,4 @@
-import { Agent } from "undici";
+import { Agent, interceptors, type Dispatcher } from "undici";
 import { basicAuthHeader, bearerAuthHeader } from "./auth.js";
 import { loadConfig } from "./config.js";
 import { mapNetworkError, mapSonarError } from "./errors.js";
@@ -28,17 +28,22 @@ export interface SonarRequestOptions {
   insecure?: boolean;
 }
 
-let insecureAgent: Agent | undefined;
+let insecureAgent: Dispatcher | undefined;
 
 /**
  * A dedicated dispatcher keeps the relaxed TLS check scoped to SonarQube calls;
  * NODE_TLS_REJECT_UNAUTHORIZED would disable verification for the whole process.
+ * A plain `Agent` skips the auto-decompression the default dispatcher applies,
+ * so gzip'd responses (SonarQube compresses behind nginx) come back as raw
+ * bytes — compose the decompress interceptor explicitly.
  */
-function dispatcherFor(insecure: boolean): Agent | undefined {
+function dispatcherFor(insecure: boolean): Dispatcher | undefined {
   if (!insecure) {
     return undefined;
   }
-  insecureAgent ??= new Agent({ connect: { rejectUnauthorized: false } });
+  insecureAgent ??= new Agent({
+    connect: { rejectUnauthorized: false },
+  }).compose(interceptors.decompress());
   return insecureAgent;
 }
 
