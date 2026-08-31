@@ -7,6 +7,10 @@ export interface SonarContext {
   host: string;
   insecure: boolean;
   projectKey: string;
+  /** GitLab project path, e.g. `group/sub/project` — needed to look up an open MR. */
+  repoPath: string;
+  /** Project CI token — reads QG, issues and measures, but not hotspots. */
+  token: string;
   /** Merge-request iid, when the analysis targets a MR rather than a branch. */
   mrIid?: string;
 }
