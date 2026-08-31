@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const FAKE_TOKEN = "fake-project-token";
 
@@ -34,6 +34,14 @@ const SONAR_FIXTURES: Record<string, unknown> = {
 
 vi.mock("../src/sonar.js", () => ({
   sonarGet: async (path: string) => SONAR_FIXTURES[path],
+}));
+
+const hotspotCommandMock = vi.fn(async (args: string[]) =>
+  JSON.stringify({ args }),
+);
+vi.mock("../src/commands/triage.js", () => ({
+  hotspotCommand: hotspotCommandMock,
+  issueCommand: vi.fn(async () => "ok"),
 }));
 
 const {
@@ -94,38 +102,30 @@ describe("cli surface", () => {
     expect(await run([])).toContain("qg:");
   });
 
-  const STUB_COMMANDS = ["hotspot", "issue", "api", "setup"];
-
-  it("answers each remaining stub without touching the network", async () => {
-    for (const name of STUB_COMMANDS) {
-      expect(await run([name])).toMatch(/pas encore implémenté/);
-    }
-  });
-
-  it("wires each read command to a real handler", async () => {
-    for (const name of ["qg", "issues", "hotspots", "analysis"]) {
-      expect(await run([name])).not.toMatch(/pas encore implémenté/);
-    }
-  });
-
   it("reports an unknown command", async () => {
     expect(await run(["nope"])).toMatch(/nope/);
   });
 });
 
 describe("context flags never reach a handler", () => {
-  it("hides --mr from the command that runs", async () => {
-    // `hotspot` still stubs and echoes the args it was handed, so this
-    // asserts what any handler actually receives.
-    const output = await run(["hotspot", "--mr", "42", "--json"]);
+  beforeEach(() => {
+    hotspotCommandMock.mockClear();
+  });
 
-    expect(output).not.toContain("--mr");
-    expect(output).not.toContain("42");
-    expect(output).toContain("--json");
+  it("hides --mr from the command that runs", async () => {
+    await run(["hotspot", "--mr", "42", "review", "AY0001"]);
+
+    const [receivedArgs] = hotspotCommandMock.mock.calls[0];
+    expect(receivedArgs).not.toContain("--mr");
+    expect(receivedArgs).not.toContain("42");
+    expect(receivedArgs).toContain("review");
   });
 
   it("hides the equals form too", async () => {
-    expect(await run(["hotspot", "--mr=42"])).not.toContain("--mr");
+    await run(["hotspot", "--mr=42", "review", "AY0001"]);
+
+    const [receivedArgs] = hotspotCommandMock.mock.calls[0];
+    expect(receivedArgs).not.toContain("--mr=42");
   });
 
   it("never leaks --mr into a real read command's output", async () => {

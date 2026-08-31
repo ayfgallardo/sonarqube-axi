@@ -1,10 +1,13 @@
 import { encode } from "@toon-format/toon";
 import { runAxiCli } from "axi-sdk-js";
 import { analysisCommand } from "./commands/analysis.js";
+import { apiCommand } from "./commands/api.js";
 import { homeCommand } from "./commands/home.js";
 import { hotspotsCommand } from "./commands/hotspots.js";
 import { issuesCommand } from "./commands/issues.js";
 import { qgCommand } from "./commands/qg.js";
+import { setupCommand } from "./commands/setup.js";
+import { hotspotCommand, issueCommand } from "./commands/triage.js";
 import { loadConfig } from "./config.js";
 import { resolveProjectContext } from "./context.js";
 import { AxiError, exitCodeForError } from "./errors.js";
@@ -44,10 +47,10 @@ examples:
   sonarqube-axi issues
   sonarqube-axi hotspots
   sonarqube-axi analysis
-  sonarqube-axi hotspot review <KEY> SAFE "motif"
-  sonarqube-axi issue transition <KEY> falsepositive "motif"
-  sonarqube-axi api issues/search --param componentKeys=<KEY>
-  sonarqube-axi setup
+  sonarqube-axi hotspot review <KEY> --safe|--fixed|--ack -m "motif"
+  sonarqube-axi issue transition <KEY> falsepositive -m "motif"
+  sonarqube-axi api issues/search componentKeys=<KEY>
+  sonarqube-axi setup --host https://sonar.example.com
 `;
 
 const COMMAND_HELP: Record<string, string> = {
@@ -56,23 +59,19 @@ const COMMAND_HELP: Record<string, string> = {
     "usage: sonarqube-axi issues [--mr <IID>|--branch] [--full] [--all]\n",
   hotspots: "usage: sonarqube-axi hotspots [--mr <IID>|--branch]\n",
   analysis: "usage: sonarqube-axi analysis\n",
-  hotspot: 'usage: sonarqube-axi hotspot review <KEY> <SAFE|FIXED> "motif"\n',
+  hotspot:
+    'usage: sonarqube-axi hotspot review <KEY> --safe|--fixed|--ack [-m "comment"]\n',
   issue:
-    'usage: sonarqube-axi issue transition <KEY> <falsepositive|wontfix> "motif"\n',
-  api: "usage: sonarqube-axi api <path> [--param name=value]\n",
-  setup: "usage: sonarqube-axi setup\n",
+    'usage: sonarqube-axi issue transition <KEY> <accept|falsepositive> -m "motif"\n',
+  api: "usage: sonarqube-axi api <path> [key=value ...] [--method <verb>] [--allow-mutation] [--personal]\n",
+  setup:
+    "usage: sonarqube-axi setup [--host <url>] [--insecure|--no-insecure] [--keychain-service <name>] [--clear-cache]\n",
 };
 
 type CommandFn = (
   args: string[],
   ctx: SonarContext | undefined,
 ) => Promise<string>;
-
-/** Placeholder until task 3 lands the write handlers. */
-function notImplementedYet(name: string): CommandFn {
-  return async (args) =>
-    encode({ command: name, args, statut: "pas encore implémenté" });
-}
 
 /** Read commands need a resolved context — only `setup` runs without one. */
 function requireContext(
@@ -94,7 +93,7 @@ export function withStrippedArgs(handler: CommandFn): CommandFn {
   return (args, ctx) => handler(parseSonarContextArgs(args).strippedArgs, ctx);
 }
 
-const READ_COMMANDS: Record<
+const CONTEXT_COMMANDS: Record<
   string,
   (args: string[], ctx: SonarContext) => Promise<string>
 > = {
@@ -102,16 +101,17 @@ const READ_COMMANDS: Record<
   issues: issuesCommand,
   hotspots: hotspotsCommand,
   analysis: analysisCommand,
+  hotspot: hotspotCommand,
+  issue: issueCommand,
+  api: apiCommand,
 };
 
 const COMMANDS: Record<string, CommandFn> = Object.fromEntries(
   COMMAND_NAMES.map((name) => [
     name,
-    withStrippedArgs(
-      READ_COMMANDS[name]
-        ? requireContext(READ_COMMANDS[name])
-        : notImplementedYet(name),
-    ),
+    name === "setup"
+      ? withStrippedArgs((args) => setupCommand(args))
+      : withStrippedArgs(requireContext(CONTEXT_COMMANDS[name])),
   ]),
 );
 
