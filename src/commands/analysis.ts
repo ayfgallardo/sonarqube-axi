@@ -25,29 +25,31 @@ interface CeComponentResponse {
  */
 async function fetchCeComponent(
   ctx: SonarContext,
-): Promise<CeComponentResponse> {
+): Promise<{ response: CeComponentResponse; channel: "projet" | "personnel" }> {
   const requestOptions = {
     token: ctx.token,
     host: ctx.host,
     insecure: ctx.insecure,
   };
   try {
-    return await sonarGet<CeComponentResponse>(
+    const response = await sonarGet<CeComponentResponse>(
       "ce/component",
       { component: ctx.projectKey },
       requestOptions,
     );
+    return { response, channel: "projet" };
   } catch (error) {
     if (!(error instanceof AxiError) || error.code !== "FORBIDDEN") {
       throw error;
     }
     const config = loadConfig();
     const fallback = await resolvePersonalToken(config.keychainService);
-    return sonarGet<CeComponentResponse>(
+    const response = await sonarGet<CeComponentResponse>(
       "ce/component",
       { component: ctx.projectKey },
       { ...requestOptions, token: fallback },
     );
+    return { response, channel: "personnel" };
   }
 }
 
@@ -55,12 +57,13 @@ export async function analysisCommand(
   _args: string[],
   ctx: SonarContext,
 ): Promise<string> {
-  const response = await fetchCeComponent(ctx);
+  const { response, channel } = await fetchCeComponent(ctx);
 
   const running = response.queue.length > 0;
   const errorMessage = response.current?.errorMessage;
 
   return renderOutput([
+    `jeton utilisé: ${channel}`,
     renderDetail(
       "analysis",
       {

@@ -79,6 +79,7 @@ describe("analysisCommand", () => {
     const output = await analysisCommand([], CTX);
 
     expect(output).toContain("last_status: SUCCESS");
+    expect(output).toContain("jeton utilisé: personnel");
     expect(resolvePersonalTokenMock).toHaveBeenCalledWith("sonar-example");
     expect(sonarGetMock).toHaveBeenCalledTimes(2);
     const secondCallOptions = sonarGetMock.mock.calls[1][2];
