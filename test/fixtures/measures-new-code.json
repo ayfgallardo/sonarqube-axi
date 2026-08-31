@@ -1,0 +1,27 @@
+{
+  "component": {
+    "key": "example_project_00000000",
+    "measures": [
+      {
+        "metric": "new_coverage",
+        "period": { "index": 1, "value": "91.2" }
+      },
+      {
+        "metric": "new_violations",
+        "period": { "index": 1, "value": "0" }
+      },
+      {
+        "metric": "new_security_hotspots_reviewed",
+        "period": { "index": 1, "value": "100" }
+      },
+      {
+        "metric": "new_duplicated_lines_density",
+        "period": { "index": 1, "value": "0.4" }
+      },
+      {
+        "metric": "new_lines",
+        "period": { "index": 1, "value": "37" }
+      }
+    ]
+  }
+}
