@@ -1,0 +1,10 @@
+{
+  "queue": [],
+  "current": {
+    "id": "AY000000000000000000AD",
+    "status": "FAILED",
+    "analysisId": "AY000000000000000000AE",
+    "submittedAt": "2026-08-30T18:02:11+0000",
+    "errorMessage": "Analysis report processing failed"
+  }
+}

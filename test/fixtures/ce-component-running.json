@@ -1,0 +1,16 @@
+{
+  "queue": [
+    {
+      "id": "AY000000000000000000AA",
+      "status": "IN_PROGRESS",
+      "submittedAt": "2026-08-31T10:15:00+0000",
+      "startedAt": "2026-08-31T10:15:04+0000"
+    }
+  ],
+  "current": {
+    "id": "AY000000000000000000AB",
+    "status": "SUCCESS",
+    "analysisId": "AY000000000000000000AC",
+    "submittedAt": "2026-08-30T18:02:11+0000"
+  }
+}
