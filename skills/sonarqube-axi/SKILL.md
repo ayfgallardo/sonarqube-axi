@@ -31,10 +31,11 @@ for a push has finished, triaging a hotspot, or transitioning an issue.
 Run once per machine: `sonarqube-axi setup --host <url>` (add `--insecure` for a self-signed
 server certificate). The project's Sonar project key and CI token are resolved automatically
 from the GitLab repo's CI/CD variables (`SONAR_PROJECTKEY`, `SONAR_TOKEN`) via `glab` — no
-per-project configuration needed. Hotspot commands additionally need a personal token in the
-macOS Keychain (service `sonar-geofoncier` by default, `security add-generic-password -s
-sonar-geofoncier -a "$USER" -w`): the project CI token can read the quality gate, issues and
-measures, but not hotspots.
+per-project configuration needed. `hotspots` and `analysis` additionally need a personal token in
+the macOS Keychain (service `sonar-geofoncier` by default, `security add-generic-password -s
+sonar-geofoncier -a "$USER" -w`): the project CI token can read the quality gate and issues, but
+not hotspots or the compute-engine task status — both commands fall back to it automatically on
+a 403.
 
 ## Commands
 
@@ -78,6 +79,7 @@ sonarqube-axi api issues/search componentKeys=<PROJECT_KEY>
   exists for the current branch (via `glab`), branch mode otherwise. `--mr <IID>` or `--branch`
   overrides the default; the two modes read different SonarQube resources (pull-request vs
   branch parameters) and can disagree.
-- **Token fallback.** The project CI token can read the quality gate, issues and measures but
-  not hotspots — those need the personal Keychain token (`--personal` on `api`, always for
-  `hotspots` and the triage commands).
+- **Token fallback.** The project CI token can read the quality gate and issues but not
+  hotspots or the compute-engine task status — `hotspots` and `analysis` retry automatically
+  with the personal Keychain token on a 403 (`--personal` does the same on `api`). `hotspot
+review` and `issue transition` always use the personal token directly, no fallback needed.
