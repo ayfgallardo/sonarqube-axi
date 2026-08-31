@@ -1,0 +1,29 @@
+{
+  "total": 2,
+  "p": 1,
+  "ps": 100,
+  "issues": [
+    {
+      "key": "AY000000000000000000001",
+      "rule": "typescript:S3776",
+      "severity": "CRITICAL",
+      "impacts": [{ "softwareQuality": "MAINTAINABILITY", "severity": "HIGH" }],
+      "component": "example_project_00000000:src/app/example.ts",
+      "line": 42,
+      "message": "Refactor this function to reduce its Cognitive Complexity from 21 to the 15 allowed.",
+      "status": "OPEN",
+      "issueStatus": "OPEN"
+    },
+    {
+      "key": "AY000000000000000000002",
+      "rule": "typescript:S1854",
+      "severity": "MINOR",
+      "impacts": [{ "softwareQuality": "MAINTAINABILITY", "severity": "LOW" }],
+      "component": "example_project_00000000:src/app/other.ts",
+      "line": 10,
+      "message": "Remove this useless assignment to variable \"result\".",
+      "status": "CONFIRMED",
+      "issueStatus": "CONFIRMED"
+    }
+  ]
+}
