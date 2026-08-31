@@ -41,6 +41,13 @@ export async function apiCommand(
   }
 
   const method = (methodFlag ?? "GET").toUpperCase();
+  if (method !== "GET" && method !== "POST") {
+    throw new AxiError(
+      `Méthode non supportée : ${method}`,
+      "VALIDATION_ERROR",
+      ["Utiliser --method GET ou --method POST"],
+    );
+  }
   if (method !== "GET" && !allowMutation) {
     throw new AxiError(
       `Mutation refusée : ${method} sur /api/${path} nécessite --allow-mutation`,

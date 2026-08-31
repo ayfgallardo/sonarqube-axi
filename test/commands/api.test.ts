@@ -105,6 +105,23 @@ describe("apiCommand", () => {
     expect(sonarGetMock).not.toHaveBeenCalled();
   });
 
+  it("rejects a method other than GET or POST, even with --allow-mutation", async () => {
+    await expect(
+      apiCommand(
+        [
+          "issues/search",
+          "issue=AY0002",
+          "--method",
+          "DELETE",
+          "--allow-mutation",
+        ],
+        CTX,
+      ),
+    ).rejects.toMatchObject({ code: "VALIDATION_ERROR" });
+    expect(sonarGetMock).not.toHaveBeenCalled();
+    expect(sonarPostMock).not.toHaveBeenCalled();
+  });
+
   it("requires a path", async () => {
     await expect(apiCommand([], CTX)).rejects.toMatchObject({
       code: "VALIDATION_ERROR",
