@@ -1,3 +1,6 @@
+import { resolvePersonalToken } from "../auth.js";
+import { loadConfig } from "../config.js";
+import { AxiError } from "../errors.js";
 import { sonarGet, type SonarContext } from "../sonar.js";
 import { getSuggestions } from "../suggestions.js";
 import { field, renderDetail, renderHelp, renderOutput } from "../toon.js";
@@ -16,15 +19,43 @@ interface CeComponentResponse {
   current?: CeTask;
 }
 
+/**
+ * `ce/component` needs the same elevated permission as hotspots — a project
+ * (CI) credential gets a 403. Retry once with the credential from the Keychain.
+ */
+async function fetchCeComponent(
+  ctx: SonarContext,
+): Promise<CeComponentResponse> {
+  const requestOptions = {
+    token: ctx.token,
+    host: ctx.host,
+    insecure: ctx.insecure,
+  };
+  try {
+    return await sonarGet<CeComponentResponse>(
+      "ce/component",
+      { component: ctx.projectKey },
+      requestOptions,
+    );
+  } catch (error) {
+    if (!(error instanceof AxiError) || error.code !== "FORBIDDEN") {
+      throw error;
+    }
+    const config = loadConfig();
+    const fallback = await resolvePersonalToken(config.keychainService);
+    return sonarGet<CeComponentResponse>(
+      "ce/component",
+      { component: ctx.projectKey },
+      { ...requestOptions, token: fallback },
+    );
+  }
+}
+
 export async function analysisCommand(
   _args: string[],
   ctx: SonarContext,
 ): Promise<string> {
-  const response = await sonarGet<CeComponentResponse>(
-    "ce/component",
-    { component: ctx.projectKey },
-    { token: ctx.token, host: ctx.host, insecure: ctx.insecure },
-  );
+  const response = await fetchCeComponent(ctx);
 
   const running = response.queue.length > 0;
   const errorMessage = response.current?.errorMessage;

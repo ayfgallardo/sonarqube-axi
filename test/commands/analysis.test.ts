@@ -9,10 +9,17 @@ function fixture<T>(name: string): T {
 }
 
 const sonarGetMock = vi.fn();
+const loadConfigMock = vi.fn();
+const resolvePersonalTokenMock = vi.fn();
 
 vi.mock("../../src/sonar.js", () => ({ sonarGet: sonarGetMock }));
+vi.mock("../../src/config.js", () => ({ loadConfig: loadConfigMock }));
+vi.mock("../../src/auth.js", () => ({
+  resolvePersonalToken: resolvePersonalTokenMock,
+}));
 
 const { analysisCommand } = await import("../../src/commands/analysis.js");
+const { AxiError } = await import("../../src/errors.js");
 
 const CTX = {
   host: "https://sonar.example.com",
@@ -25,6 +32,13 @@ const CTX = {
 describe("analysisCommand", () => {
   beforeEach(() => {
     sonarGetMock.mockReset();
+    loadConfigMock.mockReset();
+    resolvePersonalTokenMock.mockReset();
+    loadConfigMock.mockReturnValue({
+      host: CTX.host,
+      insecure: false,
+      keychainService: "sonar-example",
+    });
   });
 
   it("reports a running analysis from the queue", async () => {
@@ -52,5 +66,31 @@ describe("analysisCommand", () => {
 
     expect(output).toContain("last_status: FAILED");
     expect(output).toContain("Analysis report processing failed");
+  });
+
+  it("falls back to the personal credential on 403, like hotspots", async () => {
+    sonarGetMock
+      .mockRejectedValueOnce(
+        new AxiError("Insufficient privileges", "FORBIDDEN"),
+      )
+      .mockResolvedValueOnce(fixture("ce-component-idle.json"));
+    resolvePersonalTokenMock.mockResolvedValue("fake-personal-credential");
+
+    const output = await analysisCommand([], CTX);
+
+    expect(output).toContain("last_status: SUCCESS");
+    expect(resolvePersonalTokenMock).toHaveBeenCalledWith("sonar-example");
+    expect(sonarGetMock).toHaveBeenCalledTimes(2);
+    const secondCallOptions = sonarGetMock.mock.calls[1][2];
+    expect(secondCallOptions.token).toBe("fake-personal-credential");
+  });
+
+  it("does not swallow a non-403 error", async () => {
+    sonarGetMock.mockRejectedValueOnce(new AxiError("boom", "NETWORK_ERROR"));
+
+    await expect(analysisCommand([], CTX)).rejects.toMatchObject({
+      code: "NETWORK_ERROR",
+    });
+    expect(resolvePersonalTokenMock).not.toHaveBeenCalled();
   });
 });
