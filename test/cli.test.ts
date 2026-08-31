@@ -15,6 +15,27 @@ vi.mock("../src/context.js", () => ({
   }),
 }));
 
+vi.mock("../src/mr.js", () => ({
+  resolveMode: async (args: string[]) => ({
+    mode: { kind: "branch", branch: "main" },
+    strippedArgs: args,
+  }),
+}));
+
+const SONAR_FIXTURES: Record<string, unknown> = {
+  "qualitygates/project_status": {
+    projectStatus: { status: "OK", conditions: [], ignoredConditions: false },
+  },
+  "measures/component": { component: { measures: [] } },
+  "issues/search": { total: 0, issues: [] },
+  "hotspots/search": { paging: { total: 0 }, hotspots: [] },
+  "ce/component": { queue: [], current: undefined },
+};
+
+vi.mock("../src/sonar.js", () => ({
+  sonarGet: async (path: string) => SONAR_FIXTURES[path],
+}));
+
 const {
   COMMAND_NAMES,
   TOP_HELP,
@@ -70,12 +91,20 @@ describe("cli surface", () => {
   });
 
   it("answers the home command", async () => {
-    expect(await run([])).toMatch(/pas encore implémenté/);
+    expect(await run([])).toContain("qg:");
   });
 
-  it("answers each command stub without touching the network", async () => {
-    for (const name of COMMAND_NAMES) {
+  const STUB_COMMANDS = ["hotspot", "issue", "api", "setup"];
+
+  it("answers each remaining stub without touching the network", async () => {
+    for (const name of STUB_COMMANDS) {
       expect(await run([name])).toMatch(/pas encore implémenté/);
+    }
+  });
+
+  it("wires each read command to a real handler", async () => {
+    for (const name of ["qg", "issues", "hotspots", "analysis"]) {
+      expect(await run([name])).not.toMatch(/pas encore implémenté/);
     }
   });
 
@@ -86,9 +115,9 @@ describe("cli surface", () => {
 
 describe("context flags never reach a handler", () => {
   it("hides --mr from the command that runs", async () => {
-    // The stub echoes the args it was handed, so this asserts what a real
-    // Task 2 handler will actually receive.
-    const output = await run(["qg", "--mr", "42", "--json"]);
+    // `hotspot` still stubs and echoes the args it was handed, so this
+    // asserts what any handler actually receives.
+    const output = await run(["hotspot", "--mr", "42", "--json"]);
 
     expect(output).not.toContain("--mr");
     expect(output).not.toContain("42");
@@ -96,7 +125,11 @@ describe("context flags never reach a handler", () => {
   });
 
   it("hides the equals form too", async () => {
-    expect(await run(["issues", "--mr=42"])).not.toContain("--mr");
+    expect(await run(["hotspot", "--mr=42"])).not.toContain("--mr");
+  });
+
+  it("never leaks --mr into a real read command's output", async () => {
+    expect(await run(["qg", "--mr", "42"])).not.toContain("--mr");
   });
 
   it("passes the stripped args through withStrippedArgs", async () => {

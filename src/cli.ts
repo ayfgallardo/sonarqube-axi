@@ -1,5 +1,10 @@
 import { encode } from "@toon-format/toon";
 import { runAxiCli } from "axi-sdk-js";
+import { analysisCommand } from "./commands/analysis.js";
+import { homeCommand } from "./commands/home.js";
+import { hotspotsCommand } from "./commands/hotspots.js";
+import { issuesCommand } from "./commands/issues.js";
+import { qgCommand } from "./commands/qg.js";
 import { loadConfig } from "./config.js";
 import { resolveProjectContext } from "./context.js";
 import { AxiError, exitCodeForError } from "./errors.js";
@@ -46,10 +51,11 @@ examples:
 `;
 
 const COMMAND_HELP: Record<string, string> = {
-  qg: "usage: sonarqube-axi qg [--mr <IID>]\n",
-  issues: "usage: sonarqube-axi issues [--mr <IID>]\n",
-  hotspots: "usage: sonarqube-axi hotspots [--mr <IID>]\n",
-  analysis: "usage: sonarqube-axi analysis [--mr <IID>]\n",
+  qg: "usage: sonarqube-axi qg [--mr <IID>|--branch]\n",
+  issues:
+    "usage: sonarqube-axi issues [--mr <IID>|--branch] [--full] [--all]\n",
+  hotspots: "usage: sonarqube-axi hotspots [--mr <IID>|--branch]\n",
+  analysis: "usage: sonarqube-axi analysis\n",
   hotspot: 'usage: sonarqube-axi hotspot review <KEY> <SAFE|FIXED> "motif"\n',
   issue:
     'usage: sonarqube-axi issue transition <KEY> <falsepositive|wontfix> "motif"\n',
@@ -62,10 +68,22 @@ type CommandFn = (
   ctx: SonarContext | undefined,
 ) => Promise<string>;
 
-/** Placeholder until tasks 2 and 3 land the real handlers. */
+/** Placeholder until task 3 lands the write handlers. */
 function notImplementedYet(name: string): CommandFn {
   return async (args) =>
     encode({ command: name, args, statut: "pas encore implémenté" });
+}
+
+/** Read commands need a resolved context — only `setup` runs without one. */
+function requireContext(
+  handler: (args: string[], ctx: SonarContext) => Promise<string>,
+): CommandFn {
+  return async (args, ctx) => {
+    if (!ctx) {
+      throw new AxiError("Contexte SonarQube manquant", "CONTEXT_MISSING");
+    }
+    return handler(args, ctx);
+  };
 }
 
 /**
@@ -76,10 +94,24 @@ export function withStrippedArgs(handler: CommandFn): CommandFn {
   return (args, ctx) => handler(parseSonarContextArgs(args).strippedArgs, ctx);
 }
 
+const READ_COMMANDS: Record<
+  string,
+  (args: string[], ctx: SonarContext) => Promise<string>
+> = {
+  qg: qgCommand,
+  issues: issuesCommand,
+  hotspots: hotspotsCommand,
+  analysis: analysisCommand,
+};
+
 const COMMANDS: Record<string, CommandFn> = Object.fromEntries(
   COMMAND_NAMES.map((name) => [
     name,
-    withStrippedArgs(notImplementedYet(name)),
+    withStrippedArgs(
+      READ_COMMANDS[name]
+        ? requireContext(READ_COMMANDS[name])
+        : notImplementedYet(name),
+    ),
   ]),
 );
 
@@ -90,7 +122,7 @@ export async function main(options: MainOptions = {}): Promise<void> {
     version: VERSION,
     topLevelHelp: TOP_HELP,
     ...(options.stdout ? { stdout: options.stdout } : {}),
-    home: withStrippedArgs(notImplementedYet("home")),
+    home: withStrippedArgs(requireContext(homeCommand)),
     commands: COMMANDS,
     getCommandHelp: (command) => COMMAND_HELP[command],
     formatError: (error) => {
@@ -124,6 +156,8 @@ export async function main(options: MainOptions = {}): Promise<void> {
         host: config.host,
         insecure: config.insecure,
         projectKey: project.projectKey,
+        repoPath: project.repoPath,
+        token: project.token,
         ...(mrIid ? { mrIid } : {}),
       };
     },
