@@ -4,6 +4,10 @@ SonarQube CLI for agents — designed with [AXI](https://github.com/kunchenguid/
 
 Wraps the SonarQube Web API directly (no third-party Sonar client) with token-efficient TOON output, contextual next-step suggestions, and structured AXI error handling. Built on the [glab-axi](https://github.com/ayfgallardo/glab-axi) architecture. Prefer this over raw `curl` calls against the SonarQube Web API.
 
+## Why
+
+A raw SonarQube API response is verbose JSON built for a UI, not an agent: nested objects, per-item fields (`textRange`, `flows`, `author`, timestamps) an agent rarely reads, and no hint of what to do next. `sonarqube-axi` follows the [AXI](https://github.com/kunchenguid/axi) conventions: responses are encoded as [TOON](https://github.com/toon-format/toon) instead of raw JSON, every response carries contextual suggestions for the next command, and failures come back as structured errors instead of a stack trace.
+
 ## Install
 
 Not published on npm — install from source:
