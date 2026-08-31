@@ -1,0 +1,34 @@
+jeton utilisé: personnel
+count: 29
+hotspots[29]{key,file,line,message,probability,category}:
+  3598a64e-30f1-4387-b071-05bcb899b487,deploy/Dockerfile,49,Make sure no write permissions are assigned to the copied resource.,HIGH,auth
+  e7995b52-f86c-4263-977f-5f137502cca8,deploy/Dockerfile,73,Make sure no write permissions are assigned to the copied resource.,HIGH,auth
+  1c882e29-5167-4037-a65b-bac7aad6a8c6,deploy/Dockerfile,86,Make sure no write permissions are assigned to the copied resource.,HIGH,auth
+  874ffe5c-82cc-4057-91ce-bcd9a032e19b,deploy/Dockerfile,102,Make sure no write permissions are assigned to the copied resource.,HIGH,auth
+  75cdfbd4-4414-40da-a7e1-9ba8e8719464,deploy/Dockerfile,104,Make sure no write permissions are assigned to the copied resource.,HIGH,auth
+  1b0304fd-88a1-47df-9d3a-228ce8d727a7,deploy/Dockerfile,105,Make sure no write permissions are assigned to the copied resource.,HIGH,auth
+  8e2cc1ad-196c-406e-ab1e-6ae662f6bb9a,deploy/Dockerfile,106,Make sure no write permissions are assigned to the copied resource.,HIGH,auth
+  0d9fe1db-a864-44b0-b50d-52365e64d0ed,deploy/Dockerfile,107,Make sure no write permissions are assigned to the copied resource.,HIGH,auth
+  93a2f788-1dc6-4f96-84ba-a80447cff0ed,deploy/Dockerfile,108,Make sure no write permissions are assigned to the copied resource.,HIGH,auth
+  0057e480-9ac6-4c54-806b-0a445e55d084,deploy/Dockerfile,109,Make sure no write permissions are assigned to the copied resource.,HIGH,auth
+  f6cde9db-8a04-4b7c-8a42-e2b136266635,deploy/Dockerfile,110,Make sure no write permissions are assigned to the copied resource.,HIGH,auth
+  8fa9a637-4957-410d-87b0-8a2e5d392cc4,deploy/Dockerfile,111,Make sure no write permissions are assigned to the copied resource.,HIGH,auth
+  44ea64bc-0501-474a-aa9c-3f4cf3c6f7ab,src/example/views.py,768,Make sure allowing safe and unsafe HTTP methods is safe here.,HIGH,csrf
+  6f9da6ff-4514-460a-8b82-4e94313b3212,src/example/views.py,786,Make sure allowing safe and unsafe HTTP methods is safe here.,HIGH,csrf
+  3c3d333f-2b9e-4dfa-bce7-e1b75a21ac6f,src/example/filters.py,95,"Make sure the regex used here, which is vulnerable to polynomial runtime due to backtracking, cannot lead to denial of service.",MEDIUM,dos
+  586f9c3f-0cba-4bdf-893b-112d379d8972,deploy/Dockerfile,99,"This image might run with ""root"" as the default user. Make sure it is safe here.",MEDIUM,permission
+  39c3d50b-c2e3-4fa9-a95c-793afbc3a9c3,src/example/tests/factories.py,28,Make sure that using this pseudorandom number generator is safe here.,MEDIUM,weak-cryptography
+  fcf7cca6-63d1-4f33-adda-d8110461e144,src/example/tests/factories.py,30,Make sure that using this pseudorandom number generator is safe here.,MEDIUM,weak-cryptography
+  aa6fab8c-0206-4b53-9bcf-1c2cf15b8396,src/example/tests/factories.py,42,Make sure that using this pseudorandom number generator is safe here.,MEDIUM,weak-cryptography
+  cacb6e31-d3c3-465f-b645-d574b0218ba5,src/example/tests/factories.py,43,Make sure that using this pseudorandom number generator is safe here.,MEDIUM,weak-cryptography
+  7c7f2121-22ff-48c0-82c3-ab0895870d3a,src/example/tests/factories.py,56,Make sure that using this pseudorandom number generator is safe here.,MEDIUM,weak-cryptography
+  368b976d-44bd-494b-aa7a-65f117dd817b,src/example/tests/factories.py,67,Make sure that using this pseudorandom number generator is safe here.,MEDIUM,weak-cryptography
+  f330149a-c1ea-492e-814d-40f29c196341,src/example/tests/factories.py,68,Make sure that using this pseudorandom number generator is safe here.,MEDIUM,weak-cryptography
+  2f7c13c3-6da6-4038-94c6-b68435e3989c,src/example/views/documents.py,307,Make sure publicly writable directories are used safely here.,LOW,others
+  e5962380-b6d2-4e9a-92dd-583363b96f87,src/example/db_layer_utils.py,193,Make sure that hashing data is safe here.,LOW,others
+  b3d8b3c4-79ab-4d4c-9717-e5da9355e315,src/example/serializers/documents.py,67,Make sure that hashing data is safe here.,LOW,others
+  269fa7f5-8f94-4a34-8d97-40d42b0d08fa,src/example/serializers/documents.py,259,Make sure that hashing data is safe here.,LOW,others
+  c2b5f4ad-23e7-4183-b2fd-622a9a727b81,src/example/serializers/documents.py,408,Make sure that hashing data is safe here.,LOW,others
+  0f447efe-c94c-4259-9854-8008a5cf881f,src/example/legacy/views.py,254,Make sure that hashing data is safe here.,LOW,others
+help[1]:
+  Run `sonarqube-axi hotspot review <KEY> --safe|--fixed|--ack -m "motif"` to review one

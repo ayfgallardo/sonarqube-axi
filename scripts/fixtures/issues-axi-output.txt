@@ -1,0 +1,3 @@
+issues: aucune issue neuve
+help[1]:
+  Run `sonarqube-axi hotspots` to see remaining hotspots

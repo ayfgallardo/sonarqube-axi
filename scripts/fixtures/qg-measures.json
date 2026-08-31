@@ -1,0 +1,41 @@
+{
+  "component": {
+    "key": "example_project_00000000",
+    "name": "example-project",
+    "qualifier": "TRK",
+    "measures": [
+      {
+        "metric": "new_lines",
+        "period": {
+          "index": 1,
+          "value": "1840"
+        }
+      },
+      {
+        "metric": "new_violations",
+        "period": {
+          "index": 1,
+          "value": "0",
+          "bestValue": true
+        }
+      },
+      {
+        "metric": "new_coverage",
+        "period": {
+          "index": 1,
+          "value": "95.6",
+          "bestValue": false
+        }
+      },
+      {
+        "metric": "new_duplicated_lines_density",
+        "period": {
+          "index": 1,
+          "value": "1.32764",
+          "bestValue": false
+        }
+      }
+    ]
+  }
+}
+

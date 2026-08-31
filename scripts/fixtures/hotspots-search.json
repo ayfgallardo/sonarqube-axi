@@ -1,0 +1,958 @@
+{
+  "paging": {
+    "pageIndex": 1,
+    "pageSize": 100,
+    "total": 29
+  },
+  "hotspots": [
+    {
+      "key": "3598a64e-30f1-4387-b071-05bcb899b487",
+      "component": "example_project_00000000:deploy/Dockerfile",
+      "project": "example_project_00000000",
+      "securityCategory": "auth",
+      "vulnerabilityProbability": "HIGH",
+      "status": "TO_REVIEW",
+      "line": 49,
+      "message": "Make sure no write permissions are assigned to the copied resource.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-03-25T21:39:24+0000",
+      "updateDate": "2024-01-22T06:15:05+0000",
+      "textRange": {
+        "startLine": 49,
+        "endLine": 49,
+        "startOffset": 27,
+        "endOffset": 43
+      },
+      "flows": [
+        {
+          "locations": [
+            {
+              "component": "example_project_00000000:deploy/Dockerfile",
+              "textRange": {
+                "startLine": 49,
+                "endLine": 49,
+                "startOffset": 5,
+                "endOffset": 26
+              },
+              "msg": "Sensitive file owner.",
+              "msgFormattings": []
+            }
+          ]
+        }
+      ],
+      "ruleKey": "docker:S6504",
+      "messageFormattings": []
+    },
+    {
+      "key": "e7995b52-f86c-4263-977f-5f137502cca8",
+      "component": "example_project_00000000:deploy/Dockerfile",
+      "project": "example_project_00000000",
+      "securityCategory": "auth",
+      "vulnerabilityProbability": "HIGH",
+      "status": "TO_REVIEW",
+      "line": 73,
+      "message": "Make sure no write permissions are assigned to the copied resource.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-02-25T01:42:33+0000",
+      "updateDate": "2024-02-01T02:19:28+0000",
+      "textRange": {
+        "startLine": 73,
+        "endLine": 73,
+        "startOffset": 27,
+        "endOffset": 41
+      },
+      "flows": [
+        {
+          "locations": [
+            {
+              "component": "example_project_00000000:deploy/Dockerfile",
+              "textRange": {
+                "startLine": 73,
+                "endLine": 73,
+                "startOffset": 42,
+                "endOffset": 49
+              },
+              "msg": "Other copied resource.",
+              "msgFormattings": []
+            }
+          ]
+        },
+        {
+          "locations": [
+            {
+              "component": "example_project_00000000:deploy/Dockerfile",
+              "textRange": {
+                "startLine": 73,
+                "endLine": 73,
+                "startOffset": 5,
+                "endOffset": 26
+              },
+              "msg": "Sensitive file owner.",
+              "msgFormattings": []
+            }
+          ]
+        }
+      ],
+      "ruleKey": "docker:S6504",
+      "messageFormattings": []
+    },
+    {
+      "key": "1c882e29-5167-4037-a65b-bac7aad6a8c6",
+      "component": "example_project_00000000:deploy/Dockerfile",
+      "project": "example_project_00000000",
+      "securityCategory": "auth",
+      "vulnerabilityProbability": "HIGH",
+      "status": "TO_REVIEW",
+      "line": 86,
+      "message": "Make sure no write permissions are assigned to the copied resource.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-02-20T02:43:50+0000",
+      "updateDate": "2024-02-07T08:56:40+0000",
+      "textRange": {
+        "startLine": 86,
+        "endLine": 86,
+        "startOffset": 27,
+        "endOffset": 41
+      },
+      "flows": [
+        {
+          "locations": [
+            {
+              "component": "example_project_00000000:deploy/Dockerfile",
+              "textRange": {
+                "startLine": 86,
+                "endLine": 86,
+                "startOffset": 42,
+                "endOffset": 49
+              },
+              "msg": "Other copied resource.",
+              "msgFormattings": []
+            }
+          ]
+        },
+        {
+          "locations": [
+            {
+              "component": "example_project_00000000:deploy/Dockerfile",
+              "textRange": {
+                "startLine": 86,
+                "endLine": 86,
+                "startOffset": 5,
+                "endOffset": 26
+              },
+              "msg": "Sensitive file owner.",
+              "msgFormattings": []
+            }
+          ]
+        }
+      ],
+      "ruleKey": "docker:S6504",
+      "messageFormattings": []
+    },
+    {
+      "key": "874ffe5c-82cc-4057-91ce-bcd9a032e19b",
+      "component": "example_project_00000000:deploy/Dockerfile",
+      "project": "example_project_00000000",
+      "securityCategory": "auth",
+      "vulnerabilityProbability": "HIGH",
+      "status": "TO_REVIEW",
+      "line": 102,
+      "message": "Make sure no write permissions are assigned to the copied resource.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-04-01T09:11:02+0000",
+      "updateDate": "2024-01-21T08:54:38+0000",
+      "textRange": {
+        "startLine": 102,
+        "endLine": 102,
+        "startOffset": 40,
+        "endOffset": 49
+      },
+      "flows": [
+        {
+          "locations": [
+            {
+              "component": "example_project_00000000:deploy/Dockerfile",
+              "textRange": {
+                "startLine": 102,
+                "endLine": 102,
+                "startOffset": 5,
+                "endOffset": 26
+              },
+              "msg": "Sensitive file owner.",
+              "msgFormattings": []
+            }
+          ]
+        }
+      ],
+      "ruleKey": "docker:S6504",
+      "messageFormattings": []
+    },
+    {
+      "key": "75cdfbd4-4414-40da-a7e1-9ba8e8719464",
+      "component": "example_project_00000000:deploy/Dockerfile",
+      "project": "example_project_00000000",
+      "securityCategory": "auth",
+      "vulnerabilityProbability": "HIGH",
+      "status": "TO_REVIEW",
+      "line": 104,
+      "message": "Make sure no write permissions are assigned to the copied resource.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-04-24T06:01:28+0000",
+      "updateDate": "2024-01-09T05:08:56+0000",
+      "textRange": {
+        "startLine": 104,
+        "endLine": 104,
+        "startOffset": 27,
+        "endOffset": 40
+      },
+      "flows": [
+        {
+          "locations": [
+            {
+              "component": "example_project_00000000:deploy/Dockerfile",
+              "textRange": {
+                "startLine": 104,
+                "endLine": 104,
+                "startOffset": 5,
+                "endOffset": 26
+              },
+              "msg": "Sensitive file owner.",
+              "msgFormattings": []
+            }
+          ]
+        }
+      ],
+      "ruleKey": "docker:S6504",
+      "messageFormattings": []
+    },
+    {
+      "key": "1b0304fd-88a1-47df-9d3a-228ce8d727a7",
+      "component": "example_project_00000000:deploy/Dockerfile",
+      "project": "example_project_00000000",
+      "securityCategory": "auth",
+      "vulnerabilityProbability": "HIGH",
+      "status": "TO_REVIEW",
+      "line": 105,
+      "message": "Make sure no write permissions are assigned to the copied resource.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-04-11T10:16:16+0000",
+      "updateDate": "2024-01-20T22:14:35+0000",
+      "textRange": {
+        "startLine": 105,
+        "endLine": 105,
+        "startOffset": 27,
+        "endOffset": 43
+      },
+      "flows": [
+        {
+          "locations": [
+            {
+              "component": "example_project_00000000:deploy/Dockerfile",
+              "textRange": {
+                "startLine": 105,
+                "endLine": 105,
+                "startOffset": 5,
+                "endOffset": 26
+              },
+              "msg": "Sensitive file owner.",
+              "msgFormattings": []
+            }
+          ]
+        }
+      ],
+      "ruleKey": "docker:S6504",
+      "messageFormattings": []
+    },
+    {
+      "key": "8e2cc1ad-196c-406e-ab1e-6ae662f6bb9a",
+      "component": "example_project_00000000:deploy/Dockerfile",
+      "project": "example_project_00000000",
+      "securityCategory": "auth",
+      "vulnerabilityProbability": "HIGH",
+      "status": "TO_REVIEW",
+      "line": 106,
+      "message": "Make sure no write permissions are assigned to the copied resource.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-05-02T05:39:42+0000",
+      "updateDate": "2024-02-02T01:58:13+0000",
+      "textRange": {
+        "startLine": 106,
+        "endLine": 106,
+        "startOffset": 27,
+        "endOffset": 51
+      },
+      "flows": [
+        {
+          "locations": [
+            {
+              "component": "example_project_00000000:deploy/Dockerfile",
+              "textRange": {
+                "startLine": 106,
+                "endLine": 106,
+                "startOffset": 5,
+                "endOffset": 26
+              },
+              "msg": "Sensitive file owner.",
+              "msgFormattings": []
+            }
+          ]
+        }
+      ],
+      "ruleKey": "docker:S6504",
+      "messageFormattings": []
+    },
+    {
+      "key": "0d9fe1db-a864-44b0-b50d-52365e64d0ed",
+      "component": "example_project_00000000:deploy/Dockerfile",
+      "project": "example_project_00000000",
+      "securityCategory": "auth",
+      "vulnerabilityProbability": "HIGH",
+      "status": "TO_REVIEW",
+      "line": 107,
+      "message": "Make sure no write permissions are assigned to the copied resource.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-03-13T01:56:03+0000",
+      "updateDate": "2024-01-14T04:12:14+0000",
+      "textRange": {
+        "startLine": 107,
+        "endLine": 107,
+        "startOffset": 27,
+        "endOffset": 31
+      },
+      "flows": [
+        {
+          "locations": [
+            {
+              "component": "example_project_00000000:deploy/Dockerfile",
+              "textRange": {
+                "startLine": 107,
+                "endLine": 107,
+                "startOffset": 5,
+                "endOffset": 26
+              },
+              "msg": "Sensitive file owner.",
+              "msgFormattings": []
+            }
+          ]
+        }
+      ],
+      "ruleKey": "docker:S6504",
+      "messageFormattings": []
+    },
+    {
+      "key": "93a2f788-1dc6-4f96-84ba-a80447cff0ed",
+      "component": "example_project_00000000:deploy/Dockerfile",
+      "project": "example_project_00000000",
+      "securityCategory": "auth",
+      "vulnerabilityProbability": "HIGH",
+      "status": "TO_REVIEW",
+      "line": 108,
+      "message": "Make sure no write permissions are assigned to the copied resource.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-02-11T16:13:54+0000",
+      "updateDate": "2024-02-02T17:53:12+0000",
+      "textRange": {
+        "startLine": 108,
+        "endLine": 108,
+        "startOffset": 27,
+        "endOffset": 37
+      },
+      "flows": [
+        {
+          "locations": [
+            {
+              "component": "example_project_00000000:deploy/Dockerfile",
+              "textRange": {
+                "startLine": 108,
+                "endLine": 108,
+                "startOffset": 5,
+                "endOffset": 26
+              },
+              "msg": "Sensitive file owner.",
+              "msgFormattings": []
+            }
+          ]
+        }
+      ],
+      "ruleKey": "docker:S6504",
+      "messageFormattings": []
+    },
+    {
+      "key": "0057e480-9ac6-4c54-806b-0a445e55d084",
+      "component": "example_project_00000000:deploy/Dockerfile",
+      "project": "example_project_00000000",
+      "securityCategory": "auth",
+      "vulnerabilityProbability": "HIGH",
+      "status": "TO_REVIEW",
+      "line": 109,
+      "message": "Make sure no write permissions are assigned to the copied resource.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-02-04T23:52:23+0000",
+      "updateDate": "2024-01-24T12:29:27+0000",
+      "textRange": {
+        "startLine": 109,
+        "endLine": 109,
+        "startOffset": 27,
+        "endOffset": 35
+      },
+      "flows": [
+        {
+          "locations": [
+            {
+              "component": "example_project_00000000:deploy/Dockerfile",
+              "textRange": {
+                "startLine": 109,
+                "endLine": 109,
+                "startOffset": 5,
+                "endOffset": 26
+              },
+              "msg": "Sensitive file owner.",
+              "msgFormattings": []
+            }
+          ]
+        }
+      ],
+      "ruleKey": "docker:S6504",
+      "messageFormattings": []
+    },
+    {
+      "key": "f6cde9db-8a04-4b7c-8a42-e2b136266635",
+      "component": "example_project_00000000:deploy/Dockerfile",
+      "project": "example_project_00000000",
+      "securityCategory": "auth",
+      "vulnerabilityProbability": "HIGH",
+      "status": "TO_REVIEW",
+      "line": 110,
+      "message": "Make sure no write permissions are assigned to the copied resource.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-01-30T09:55:51+0000",
+      "updateDate": "2024-02-06T02:52:38+0000",
+      "textRange": {
+        "startLine": 110,
+        "endLine": 110,
+        "startOffset": 27,
+        "endOffset": 47
+      },
+      "flows": [
+        {
+          "locations": [
+            {
+              "component": "example_project_00000000:deploy/Dockerfile",
+              "textRange": {
+                "startLine": 110,
+                "endLine": 110,
+                "startOffset": 5,
+                "endOffset": 26
+              },
+              "msg": "Sensitive file owner.",
+              "msgFormattings": []
+            }
+          ]
+        }
+      ],
+      "ruleKey": "docker:S6504",
+      "messageFormattings": []
+    },
+    {
+      "key": "8fa9a637-4957-410d-87b0-8a2e5d392cc4",
+      "component": "example_project_00000000:deploy/Dockerfile",
+      "project": "example_project_00000000",
+      "securityCategory": "auth",
+      "vulnerabilityProbability": "HIGH",
+      "status": "TO_REVIEW",
+      "line": 111,
+      "message": "Make sure no write permissions are assigned to the copied resource.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-01-19T09:40:25+0000",
+      "updateDate": "2024-01-16T06:33:47+0000",
+      "textRange": {
+        "startLine": 111,
+        "endLine": 111,
+        "startOffset": 27,
+        "endOffset": 41
+      },
+      "flows": [
+        {
+          "locations": [
+            {
+              "component": "example_project_00000000:deploy/Dockerfile",
+              "textRange": {
+                "startLine": 111,
+                "endLine": 111,
+                "startOffset": 5,
+                "endOffset": 26
+              },
+              "msg": "Sensitive file owner.",
+              "msgFormattings": []
+            }
+          ]
+        }
+      ],
+      "ruleKey": "docker:S6504",
+      "messageFormattings": []
+    },
+    {
+      "key": "44ea64bc-0501-474a-aa9c-3f4cf3c6f7ab",
+      "component": "example_project_00000000:src/example/views.py",
+      "project": "example_project_00000000",
+      "securityCategory": "csrf",
+      "vulnerabilityProbability": "HIGH",
+      "status": "TO_REVIEW",
+      "line": 768,
+      "message": "Make sure allowing safe and unsafe HTTP methods is safe here.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-01-18T06:48:48+0000",
+      "updateDate": "2024-02-03T01:17:56+0000",
+      "textRange": {
+        "startLine": 768,
+        "endLine": 768,
+        "startOffset": 4,
+        "endOffset": 10
+      },
+      "flows": [],
+      "ruleKey": "python:S3752",
+      "messageFormattings": []
+    },
+    {
+      "key": "6f9da6ff-4514-460a-8b82-4e94313b3212",
+      "component": "example_project_00000000:src/example/views.py",
+      "project": "example_project_00000000",
+      "securityCategory": "csrf",
+      "vulnerabilityProbability": "HIGH",
+      "status": "TO_REVIEW",
+      "line": 786,
+      "message": "Make sure allowing safe and unsafe HTTP methods is safe here.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-03-11T15:05:19+0000",
+      "updateDate": "2024-01-14T03:51:24+0000",
+      "textRange": {
+        "startLine": 786,
+        "endLine": 786,
+        "startOffset": 4,
+        "endOffset": 23
+      },
+      "flows": [],
+      "ruleKey": "python:S3752",
+      "messageFormattings": []
+    },
+    {
+      "key": "3c3d333f-2b9e-4dfa-bce7-e1b75a21ac6f",
+      "component": "example_project_00000000:src/example/filters.py",
+      "project": "example_project_00000000",
+      "securityCategory": "dos",
+      "vulnerabilityProbability": "MEDIUM",
+      "status": "TO_REVIEW",
+      "line": 95,
+      "message": "Make sure the regex used here, which is vulnerable to polynomial runtime due to backtracking, cannot lead to denial of service.",
+      "author": "author@example.com",
+      "creationDate": "2024-04-30T01:52:00+0000",
+      "updateDate": "2024-01-22T20:56:14+0000",
+      "textRange": {
+        "startLine": 95,
+        "endLine": 95,
+        "startOffset": 28,
+        "endOffset": 37
+      },
+      "flows": [],
+      "ruleKey": "python:S5852",
+      "messageFormattings": []
+    },
+    {
+      "key": "586f9c3f-0cba-4bdf-893b-112d379d8972",
+      "component": "example_project_00000000:deploy/Dockerfile",
+      "project": "example_project_00000000",
+      "securityCategory": "permission",
+      "vulnerabilityProbability": "MEDIUM",
+      "status": "TO_REVIEW",
+      "line": 99,
+      "message": "This image might run with \"root\" as the default user. Make sure it is safe here.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-05-18T12:42:47+0000",
+      "updateDate": "2024-01-27T06:02:47+0000",
+      "textRange": {
+        "startLine": 99,
+        "endLine": 99,
+        "startOffset": 0,
+        "endOffset": 17
+      },
+      "flows": [],
+      "ruleKey": "docker:S6471",
+      "messageFormattings": []
+    },
+    {
+      "key": "39c3d50b-c2e3-4fa9-a95c-793afbc3a9c3",
+      "component": "example_project_00000000:src/example/tests/factories.py",
+      "project": "example_project_00000000",
+      "securityCategory": "weak-cryptography",
+      "vulnerabilityProbability": "MEDIUM",
+      "status": "TO_REVIEW",
+      "line": 28,
+      "message": "Make sure that using this pseudorandom number generator is safe here.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-02-07T11:10:28+0000",
+      "updateDate": "2024-01-13T03:47:05+0000",
+      "textRange": {
+        "startLine": 28,
+        "endLine": 28,
+        "startOffset": 79,
+        "endOffset": 102
+      },
+      "flows": [],
+      "ruleKey": "python:S2245",
+      "messageFormattings": []
+    },
+    {
+      "key": "fcf7cca6-63d1-4f33-adda-d8110461e144",
+      "component": "example_project_00000000:src/example/tests/factories.py",
+      "project": "example_project_00000000",
+      "securityCategory": "weak-cryptography",
+      "vulnerabilityProbability": "MEDIUM",
+      "status": "TO_REVIEW",
+      "line": 30,
+      "message": "Make sure that using this pseudorandom number generator is safe here.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-01-26T18:21:47+0000",
+      "updateDate": "2024-01-16T14:26:10+0000",
+      "textRange": {
+        "startLine": 30,
+        "endLine": 30,
+        "startOffset": 59,
+        "endOffset": 102
+      },
+      "flows": [],
+      "ruleKey": "python:S2245",
+      "messageFormattings": []
+    },
+    {
+      "key": "aa6fab8c-0206-4b53-9bcf-1c2cf15b8396",
+      "component": "example_project_00000000:src/example/tests/factories.py",
+      "project": "example_project_00000000",
+      "securityCategory": "weak-cryptography",
+      "vulnerabilityProbability": "MEDIUM",
+      "status": "TO_REVIEW",
+      "line": 42,
+      "message": "Make sure that using this pseudorandom number generator is safe here.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-03-17T22:21:59+0000",
+      "updateDate": "2024-01-26T23:07:52+0000",
+      "textRange": {
+        "startLine": 42,
+        "endLine": 42,
+        "startOffset": 80,
+        "endOffset": 103
+      },
+      "flows": [],
+      "ruleKey": "python:S2245",
+      "messageFormattings": []
+    },
+    {
+      "key": "cacb6e31-d3c3-465f-b645-d574b0218ba5",
+      "component": "example_project_00000000:src/example/tests/factories.py",
+      "project": "example_project_00000000",
+      "securityCategory": "weak-cryptography",
+      "vulnerabilityProbability": "MEDIUM",
+      "status": "TO_REVIEW",
+      "line": 43,
+      "message": "Make sure that using this pseudorandom number generator is safe here.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-02-29T15:50:46+0000",
+      "updateDate": "2024-01-26T18:00:21+0000",
+      "textRange": {
+        "startLine": 43,
+        "endLine": 43,
+        "startOffset": 48,
+        "endOffset": 76
+      },
+      "flows": [],
+      "ruleKey": "python:S2245",
+      "messageFormattings": []
+    },
+    {
+      "key": "7c7f2121-22ff-48c0-82c3-ab0895870d3a",
+      "component": "example_project_00000000:src/example/tests/factories.py",
+      "project": "example_project_00000000",
+      "securityCategory": "weak-cryptography",
+      "vulnerabilityProbability": "MEDIUM",
+      "status": "TO_REVIEW",
+      "line": 56,
+      "message": "Make sure that using this pseudorandom number generator is safe here.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-05-06T06:31:24+0000",
+      "updateDate": "2024-01-16T17:56:37+0000",
+      "textRange": {
+        "startLine": 56,
+        "endLine": 56,
+        "startOffset": 46,
+        "endOffset": 78
+      },
+      "flows": [],
+      "ruleKey": "python:S2245",
+      "messageFormattings": []
+    },
+    {
+      "key": "368b976d-44bd-494b-aa7a-65f117dd817b",
+      "component": "example_project_00000000:src/example/tests/factories.py",
+      "project": "example_project_00000000",
+      "securityCategory": "weak-cryptography",
+      "vulnerabilityProbability": "MEDIUM",
+      "status": "TO_REVIEW",
+      "line": 67,
+      "message": "Make sure that using this pseudorandom number generator is safe here.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-02-02T10:35:52+0000",
+      "updateDate": "2024-02-04T07:47:12+0000",
+      "textRange": {
+        "startLine": 67,
+        "endLine": 67,
+        "startOffset": 79,
+        "endOffset": 102
+      },
+      "flows": [],
+      "ruleKey": "python:S2245",
+      "messageFormattings": []
+    },
+    {
+      "key": "f330149a-c1ea-492e-814d-40f29c196341",
+      "component": "example_project_00000000:src/example/tests/factories.py",
+      "project": "example_project_00000000",
+      "securityCategory": "weak-cryptography",
+      "vulnerabilityProbability": "MEDIUM",
+      "status": "TO_REVIEW",
+      "line": 68,
+      "message": "Make sure that using this pseudorandom number generator is safe here.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-05-09T23:02:23+0000",
+      "updateDate": "2024-01-25T11:02:54+0000",
+      "textRange": {
+        "startLine": 68,
+        "endLine": 68,
+        "startOffset": 59,
+        "endOffset": 102
+      },
+      "flows": [],
+      "ruleKey": "python:S2245",
+      "messageFormattings": []
+    },
+    {
+      "key": "2f7c13c3-6da6-4038-94c6-b68435e3989c",
+      "component": "example_project_00000000:src/example/views/documents.py",
+      "project": "example_project_00000000",
+      "securityCategory": "others",
+      "vulnerabilityProbability": "LOW",
+      "status": "TO_REVIEW",
+      "line": 307,
+      "message": "Make sure publicly writable directories are used safely here.",
+      "author": "author@example.com",
+      "creationDate": "2024-06-15T16:38:22+0000",
+      "updateDate": "2024-02-01T00:36:01+0000",
+      "textRange": {
+        "startLine": 307,
+        "endLine": 307,
+        "startOffset": 38,
+        "endOffset": 44
+      },
+      "flows": [],
+      "ruleKey": "python:S5443",
+      "messageFormattings": []
+    },
+    {
+      "key": "e5962380-b6d2-4e9a-92dd-583363b96f87",
+      "component": "example_project_00000000:src/example/db_layer_utils.py",
+      "project": "example_project_00000000",
+      "securityCategory": "others",
+      "vulnerabilityProbability": "LOW",
+      "status": "TO_REVIEW",
+      "line": 193,
+      "message": "Make sure that hashing data is safe here.",
+      "author": "author@example.com",
+      "creationDate": "2024-07-05T14:49:16+0000",
+      "updateDate": "2024-01-10T12:47:58+0000",
+      "textRange": {
+        "startLine": 193,
+        "endLine": 193,
+        "startOffset": 11,
+        "endOffset": 14
+      },
+      "flows": [],
+      "ruleKey": "python:S4790",
+      "messageFormattings": []
+    },
+    {
+      "key": "b3d8b3c4-79ab-4d4c-9717-e5da9355e315",
+      "component": "example_project_00000000:src/example/serializers/documents.py",
+      "project": "example_project_00000000",
+      "securityCategory": "others",
+      "vulnerabilityProbability": "LOW",
+      "status": "TO_REVIEW",
+      "line": 67,
+      "message": "Make sure that hashing data is safe here.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-03-04T00:56:48+0000",
+      "updateDate": "2024-02-02T04:07:04+0000",
+      "textRange": {
+        "startLine": 67,
+        "endLine": 67,
+        "startOffset": 25,
+        "endOffset": 29
+      },
+      "flows": [],
+      "ruleKey": "python:S4790",
+      "messageFormattings": []
+    },
+    {
+      "key": "269fa7f5-8f94-4a34-8d97-40d42b0d08fa",
+      "component": "example_project_00000000:src/example/serializers/documents.py",
+      "project": "example_project_00000000",
+      "securityCategory": "others",
+      "vulnerabilityProbability": "LOW",
+      "status": "TO_REVIEW",
+      "line": 259,
+      "message": "Make sure that hashing data is safe here.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-05-23T16:59:42+0000",
+      "updateDate": "2024-01-16T14:04:36+0000",
+      "textRange": {
+        "startLine": 259,
+        "endLine": 259,
+        "startOffset": 25,
+        "endOffset": 29
+      },
+      "flows": [],
+      "ruleKey": "python:S4790",
+      "messageFormattings": []
+    },
+    {
+      "key": "c2b5f4ad-23e7-4183-b2fd-622a9a727b81",
+      "component": "example_project_00000000:src/example/serializers/documents.py",
+      "project": "example_project_00000000",
+      "securityCategory": "others",
+      "vulnerabilityProbability": "LOW",
+      "status": "TO_REVIEW",
+      "line": 408,
+      "message": "Make sure that hashing data is safe here.",
+      "author": "author@example.com",
+      "creationDate": "2024-06-28T13:07:51+0000",
+      "updateDate": "2024-01-26T02:01:31+0000",
+      "textRange": {
+        "startLine": 408,
+        "endLine": 408,
+        "startOffset": 29,
+        "endOffset": 33
+      },
+      "flows": [],
+      "ruleKey": "python:S4790",
+      "messageFormattings": []
+    },
+    {
+      "key": "0f447efe-c94c-4259-9854-8008a5cf881f",
+      "component": "example_project_00000000:src/example/legacy/views.py",
+      "project": "example_project_00000000",
+      "securityCategory": "others",
+      "vulnerabilityProbability": "LOW",
+      "status": "TO_REVIEW",
+      "line": 254,
+      "message": "Make sure that hashing data is safe here.",
+      "assignee": "00000000-0000-0000-0000-000000000000",
+      "author": "author@example.com",
+      "creationDate": "2024-06-23T22:53:19+0000",
+      "updateDate": "2024-01-30T09:36:10+0000",
+      "textRange": {
+        "startLine": 254,
+        "endLine": 254,
+        "startOffset": 17,
+        "endOffset": 21
+      },
+      "flows": [],
+      "ruleKey": "python:S4790",
+      "messageFormattings": []
+    }
+  ],
+  "components": [
+    {
+      "key": "example_project_00000000:src/example/views.py",
+      "qualifier": "FIL",
+      "name": "views.py",
+      "longName": "src/example/views.py",
+      "path": "src/example/views.py"
+    },
+    {
+      "key": "example_project_00000000:deploy/Dockerfile",
+      "qualifier": "FIL",
+      "name": "Dockerfile",
+      "longName": "deploy/Dockerfile",
+      "path": "deploy/Dockerfile"
+    },
+    {
+      "key": "example_project_00000000:src/example/db_layer_utils.py",
+      "qualifier": "FIL",
+      "name": "db_layer_utils.py",
+      "longName": "src/example/db_layer_utils.py",
+      "path": "src/example/db_layer_utils.py"
+    },
+    {
+      "key": "example_project_00000000:src/example/tests/factories.py",
+      "qualifier": "FIL",
+      "name": "factories.py",
+      "longName": "src/example/tests/factories.py",
+      "path": "src/example/tests/factories.py"
+    },
+    {
+      "key": "example_project_00000000",
+      "qualifier": "TRK",
+      "name": "example-project",
+      "longName": "example-project"
+    },
+    {
+      "key": "example_project_00000000:src/example/legacy/views.py",
+      "qualifier": "FIL",
+      "name": "views.py",
+      "longName": "src/example/legacy/views.py",
+      "path": "src/example/legacy/views.py"
+    },
+    {
+      "key": "example_project_00000000:src/example/views/documents.py",
+      "qualifier": "FIL",
+      "name": "documents.py",
+      "longName": "src/example/views/documents.py",
+      "path": "src/example/views/documents.py"
+    },
+    {
+      "key": "example_project_00000000:src/example/filters.py",
+      "qualifier": "FIL",
+      "name": "filters.py",
+      "longName": "src/example/filters.py",
+      "path": "src/example/filters.py"
+    },
+    {
+      "key": "example_project_00000000:src/example/serializers/documents.py",
+      "qualifier": "FIL",
+      "name": "documents.py",
+      "longName": "src/example/serializers/documents.py",
+      "path": "src/example/serializers/documents.py"
+    }
+  ]
+}
