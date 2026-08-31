@@ -1,7 +1,7 @@
 import { execFile } from "node:child_process";
 import { AxiError } from "./errors.js";
 
-export const DEFAULT_KEYCHAIN_SERVICE = "sonar-geofoncier";
+export const DEFAULT_KEYCHAIN_SERVICE = "sonarqube-axi";
 
 /** Primary scheme accepted by SonarQube 10+. */
 export function bearerAuthHeader(token: string): string {

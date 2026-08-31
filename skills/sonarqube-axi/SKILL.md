@@ -32,8 +32,9 @@ Run once per machine: `sonarqube-axi setup --host <url>` (add `--insecure` for a
 server certificate). The project's Sonar project key and CI token are resolved automatically
 from the GitLab repo's CI/CD variables (`SONAR_PROJECTKEY`, `SONAR_TOKEN`) via `glab` — no
 per-project configuration needed. `hotspots` and `analysis` additionally need a personal token in
-the macOS Keychain (service `sonar-geofoncier` by default, `security add-generic-password -s
-sonar-geofoncier -a "$USER" -w`): the project CI token can read the quality gate and issues, but
+the macOS Keychain (service `sonarqube-axi` by default — set the real service name locally with
+`setup --keychain-service <name>` — `security add-generic-password -s sonarqube-axi -a "$USER"
+-w`): the project CI token can read the quality gate and issues, but
 not hotspots or the compute-engine task status — both commands fall back to it automatically on
 a 403.
 

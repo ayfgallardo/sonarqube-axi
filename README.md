@@ -35,10 +35,10 @@ Add `--insecure` for a self-signed server certificate. This writes `~/.config/so
 For hotspots, the compute-engine analysis status, and triage, register a personal token in the macOS Keychain:
 
 ```sh
-security add-generic-password -s sonar-geofoncier -a "$USER" -w
+security add-generic-password -s sonarqube-axi -a "$USER" -w
 ```
 
-(`--keychain-service <name>` on `setup` to use a different service name.)
+(`--keychain-service <name>` on `setup` to use a different service name — e.g. one matching your organization.)
 
 ## Commands
 

@@ -16,9 +16,10 @@ Commandes : `qg`, `issues`, `hotspots`, `analysis`, `hotspot review`,
 ## Auth
 
 - Jeton projet (CI, `SONAR_TOKEN`) : lit la quality gate et les issues.
-- Jeton personnel (Trousseau macOS, service par défaut `sonar-geofoncier`) :
-  seul à pouvoir lire les hotspots et le statut compute-engine (`ce/component`)
-  et à effectuer les mutations de triage. `hotspots` et `analysis` basculent
+- Jeton personnel (Trousseau macOS, service par défaut `sonarqube-axi`, le nom
+  réel se configure localement via `setup --keychain-service <name>`) : seul à
+  pouvoir lire les hotspots et le statut compute-engine (`ce/component`) et à
+  effectuer les mutations de triage. `hotspots` et `analysis` basculent
   automatiquement dessus sur un 403 ; `hotspot review` et `issue transition`
   l'utilisent directement.
 - Un dispatcher `undici.Agent` custom (mode `insecure`, certificat auto-signé)

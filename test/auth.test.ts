@@ -65,12 +65,12 @@ describe("resolvePersonalToken", () => {
     ]);
   });
 
-  it("defaults to the sonar-geofoncier service", async () => {
+  it("defaults to the sonarqube-axi service", async () => {
     keychainReturns("fake-personal-token\n");
 
     await resolvePersonalToken();
 
-    expect(execFileMock.mock.calls[0][1]).toContain("sonar-geofoncier");
+    expect(execFileMock.mock.calls[0][1]).toContain("sonarqube-axi");
   });
 
   it("guides towards `security add-generic-password` when absent", async () => {
