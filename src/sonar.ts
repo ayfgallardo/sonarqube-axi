@@ -2,6 +2,7 @@ import { Agent, interceptors, type Dispatcher } from "undici";
 import { basicAuthHeader, bearerAuthHeader } from "./auth.js";
 import { loadConfig } from "./config.js";
 import { mapNetworkError, mapSonarError } from "./errors.js";
+import { recordRawBody } from "./gain.js";
 
 export interface SonarContext {
   host: string;
@@ -126,6 +127,7 @@ async function request<T>(
 /** Sonar answers several write endpoints with an empty 204. */
 async function safeJson(response: Response): Promise<unknown> {
   const text = await response.text();
+  recordRawBody(text);
   if (text.trim() === "") {
     return undefined;
   }

@@ -1,6 +1,7 @@
 import { runAxiCli } from "axi-sdk-js";
 import { analysisCommand } from "./commands/analysis.js";
 import { apiCommand } from "./commands/api.js";
+import { gainCommand } from "./commands/gain.js";
 import { homeCommand } from "./commands/home.js";
 import { hotspotsCommand } from "./commands/hotspots.js";
 import { issuesCommand } from "./commands/issues.js";
@@ -10,6 +11,7 @@ import { hotspotCommand, issueCommand } from "./commands/triage.js";
 import { loadConfig } from "./config.js";
 import { resolveProjectContext } from "./context.js";
 import { AxiError, exitCodeForError } from "./errors.js";
+import { flushGain, gainCommandName, gainStdout, startGain } from "./gain.js";
 import type { SonarContext } from "./sonar.js";
 import { renderError } from "./toon.js";
 import { VERSION } from "./version.js";
@@ -32,6 +34,7 @@ export const COMMAND_NAMES = [
   "hotspot",
   "issue",
   "api",
+  "gain",
   "setup",
 ] as const;
 
@@ -50,6 +53,7 @@ examples:
   sonarqube-axi hotspot review <KEY> --safe|--fixed|--ack -m "motif"
   sonarqube-axi issue transition <KEY> falsepositive -m "motif"
   sonarqube-axi api issues/search componentKeys=<KEY>
+  sonarqube-axi gain
   sonarqube-axi setup --host https://sonar.example.com
 `;
 
@@ -64,6 +68,7 @@ const COMMAND_HELP: Record<string, string> = {
   issue:
     'usage: sonarqube-axi issue transition <KEY> <accept|falsepositive> -m "motif"\n',
   api: "usage: sonarqube-axi api <path> [key=value ...] [--method <verb>] [--allow-mutation] [--personal]\n",
+  gain: "usage: sonarqube-axi gain\n",
   setup:
     "usage: sonarqube-axi setup [--host <url>] [--insecure|--no-insecure] [--keychain-service <name>] [--clear-cache]\n",
 };
@@ -106,22 +111,30 @@ const CONTEXT_COMMANDS: Record<
   api: apiCommand,
 };
 
+/** Commands that run without a resolved SonarQube context. */
+const LOCAL_COMMANDS: Record<string, CommandFn> = {
+  setup: (args) => setupCommand(args),
+  gain: () => gainCommand(),
+};
+
 const COMMANDS: Record<string, CommandFn> = Object.fromEntries(
   COMMAND_NAMES.map((name) => [
     name,
-    name === "setup"
-      ? withStrippedArgs((args) => setupCommand(args))
-      : withStrippedArgs(requireContext(CONTEXT_COMMANDS[name])),
+    withStrippedArgs(
+      LOCAL_COMMANDS[name] ?? requireContext(CONTEXT_COMMANDS[name]),
+    ),
   ]),
 );
 
 export async function main(options: MainOptions = {}): Promise<void> {
+  const argv = options.argv ?? process.argv.slice(2);
+  startGain();
   await runAxiCli<SonarContext | undefined>({
-    ...(options.argv ? { argv: options.argv } : {}),
+    argv,
     description: DESCRIPTION,
     version: VERSION,
     topLevelHelp: TOP_HELP,
-    ...(options.stdout ? { stdout: options.stdout } : {}),
+    stdout: gainStdout(options.stdout ?? process.stdout),
     home: withStrippedArgs(requireContext(homeCommand)),
     commands: COMMANDS,
     getCommandHelp: (command) => COMMAND_HELP[command],
@@ -143,8 +156,9 @@ export async function main(options: MainOptions = {}): Promise<void> {
       };
     },
     resolveContext: async ({ command, args }) => {
-      // `setup` writes the configuration these lookups need.
-      if (command === "setup") {
+      // `setup` writes the configuration these lookups need; `gain` reads a
+      // local log and talks to no server.
+      if (command !== undefined && command in LOCAL_COMMANDS) {
         return undefined;
       }
       const { mrIid } = parseSonarContextArgs(args);
@@ -160,6 +174,8 @@ export async function main(options: MainOptions = {}): Promise<void> {
       };
     },
   });
+
+  await flushGain(gainCommandName(argv, COMMAND_NAMES));
 }
 
 export function parseSonarContextArgs(args: string[]): {

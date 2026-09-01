@@ -53,6 +53,7 @@ carry `SONAR_PROJECTKEY` and `SONAR_TOKEN`).
 | `sonarqube-axi hotspot review <KEY> --safe (or --fixed or --ack) [-m "comment"]`                               | Resolve a hotspot review (safe/fixed/acknowledge). Mutation — never run without an explicit go.                                                                  |
 | `sonarqube-axi issue transition <KEY> <accept or falsepositive> -m "motif"`                                    | Transition an issue. Mutation — never run without an explicit go.                                                                                                |
 | `sonarqube-axi api <path> [key=value ...] [--method <verb>] [--allow-mutation] [--personal]`                   | Raw SonarQube Web API call, same AXI conventions (`--allow-mutation` required for non-GET, `--personal` to use the Keychain token instead of the project token). |
+| `sonarqube-axi gain`                                                                                           | Token savings recorded by this CLI (raw API JSON vs rendered output), totals and per-command breakdown.                                                          |
 | `sonarqube-axi setup [--host <url>] [--insecure or --no-insecure] [--keychain-service <name>] [--clear-cache]` | Configure or inspect the local host/token setup.                                                                                                                 |
 
 Every command accepts `--help` for its exact flags — treat this table as a map of the surface,
@@ -69,6 +70,7 @@ sonarqube-axi analysis
 sonarqube-axi hotspot review AbCdEf123 --safe -m "reviewed, no injection path"
 sonarqube-axi issue transition AbCdEf123 falsepositive -m "test fixture, not prod code"
 sonarqube-axi api issues/search componentKeys=<PROJECT_KEY>
+sonarqube-axi gain
 ```
 
 ## Encoded traps

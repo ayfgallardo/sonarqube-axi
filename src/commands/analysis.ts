@@ -1,6 +1,7 @@
 import { resolvePersonalToken } from "../auth.js";
 import { loadConfig } from "../config.js";
 import { AxiError } from "../errors.js";
+import { dropRetriedRawBody } from "../gain.js";
 import { sonarGet, type SonarContext } from "../sonar.js";
 import { getSuggestions } from "../suggestions.js";
 import { field, renderDetail, renderHelp, renderOutput } from "../toon.js";
@@ -42,6 +43,7 @@ async function fetchCeComponent(
     if (!(error instanceof AxiError) || error.code !== "FORBIDDEN") {
       throw error;
     }
+    dropRetriedRawBody();
     const config = loadConfig();
     const fallback = await resolvePersonalToken(config.keychainService);
     const response = await sonarGet<CeComponentResponse>(

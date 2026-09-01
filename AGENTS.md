@@ -4,7 +4,7 @@ CLI AXI pour SonarQube. Architecture calquée sur glab-axi : `bin/` fast-path
 `--version`, `src/cli.ts` routage pur via `runAxiCli` (axi-sdk-js), un module
 par famille de commandes dans `src/commands/`, rendu TOON via `src/toon.ts`.
 Commandes : `qg`, `issues`, `hotspots`, `analysis`, `hotspot review`,
-`issue transition`, `api`, `setup` — surface documentée dans `README.md` et
+`issue transition`, `api`, `gain`, `setup` — surface documentée dans `README.md` et
 `skills/sonarqube-axi/SKILL.md`.
 
 ## Contraintes dures
@@ -12,6 +12,19 @@ Commandes : `qg`, `issues`, `hotspots`, `analysis`, `hotspot review`,
 - **Aucun token, aucune clé de projet Sonar réelle, aucune URL d'instance
   interne** dans le repo — code, tests, fixtures, docs.
 - Pas de client Sonar tiers : appels HTTP directs à l'API SonarQube.
+
+## Mesure du gain
+
+- Chaque invocation qui appelle Sonar appende une ligne JSONL sous le répertoire de
+  données de la plateforme (`~/Library/Application Support/axi/sonarqube-axi.jsonl`) :
+  tokens du JSON brut des réponses HTTP contre tokens de la sortie rendue.
+- **Seul le nom de la sous-commande est enregistré** — jamais un argument, une valeur de
+  flag, une clé de projet, une URL ni un fragment de payload.
+- `gpt-tokenizer` est importé dynamiquement **après** l'écriture de stdout : la sortie
+  rendue ne doit jamais attendre le comptage, et le fast-path `--version` ne le charge
+  pas. Le coût (~80 ms) est payé avant la sortie du process, pas avant la réponse.
+- Tout l'enregistrement est en try/catch silencieux : il ne change ni la sortie ni le
+  code de sortie. `AXI_GAIN=0` le coupe.
 
 ## Auth
 
