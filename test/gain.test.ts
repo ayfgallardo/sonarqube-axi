@@ -6,7 +6,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const home = { value: "" };
@@ -30,6 +30,21 @@ const { gainCommand } = await import("../src/commands/gain.js");
 const RAW = JSON.stringify({
   hotspots: [{ key: "AY-1", message: "Make sure this is safe" }],
 });
+
+/**
+ * `dataDir()` picks a different branch per platform, so a runner only ever
+ * exercises one of them. Stubbing the platform lets a single test cover both.
+ */
+function stubPlatform(platform: NodeJS.Platform): () => void {
+  const original = Object.getOwnPropertyDescriptor(process, "platform");
+  Object.defineProperty(process, "platform", {
+    configurable: true,
+    value: platform,
+  });
+  return () => {
+    Object.defineProperty(process, "platform", original as PropertyDescriptor);
+  };
+}
 
 function readLines(): string[] {
   return readFileSync(gainLogPath(), "utf-8").trim().split("\n");
@@ -144,30 +159,34 @@ describe("gain recorder", () => {
     expect(gainCommandName(["geofoncier:project"], ["qg"])).toBeUndefined();
   });
 
-  it("keeps the command output intact when the log cannot be written", async () => {
-    const stdout = {
-      chunks: [] as string[],
-      write(chunk: string) {
-        this.chunks.push(chunk);
-        return true;
-      },
-    };
-    const tee = gainStdout(stdout);
-    tee.write("rendered output\n");
-    recordRawBody(RAW);
-    mkdirSync(join(home.value, "Library", "Application Support"), {
-      recursive: true,
-    });
-    writeFileSync(
-      join(home.value, "Library", "Application Support", "axi"),
-      "",
-    );
-    writeFileSync(join(home.value, ".local"), "");
+  for (const platform of ["darwin", "linux"] as const) {
+    it(`keeps the command output intact when the log cannot be written on ${platform}`, async () => {
+      const restorePlatform = stubPlatform(platform);
+      try {
+        const stdout = {
+          chunks: [] as string[],
+          write(chunk: string) {
+            this.chunks.push(chunk);
+            return true;
+          },
+        };
+        const tee = gainStdout(stdout);
+        tee.write("rendered output\n");
+        recordRawBody(RAW);
+        // A plain file where the data directory belongs, derived from the very
+        // path production uses, so the block survives a change of layout.
+        const dataDir = dirname(gainLogPath());
+        mkdirSync(dirname(dataDir), { recursive: true });
+        writeFileSync(dataDir, "");
 
-    await expect(flushGain("hotspots")).resolves.toBeUndefined();
-    expect(stdout.chunks).toEqual(["rendered output\n"]);
-    expect(process.exitCode).toBeUndefined();
-  });
+        await expect(flushGain("hotspots")).resolves.toBeUndefined();
+        expect(stdout.chunks).toEqual(["rendered output\n"]);
+        expect(process.exitCode).toBeUndefined();
+      } finally {
+        restorePlatform();
+      }
+    });
+  }
 
   it("ignores malformed lines when reading the log", async () => {
     recordRawBody(RAW);
