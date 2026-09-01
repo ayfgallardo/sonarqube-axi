@@ -58,6 +58,7 @@ Run from within the repository whose analysis you want to inspect.
 | `sonarqube-axi hotspot review <KEY> --safe (or --fixed or --ack) [-m "comment"]`                               | Resolve a hotspot review. Mutation.                                                                       |
 | `sonarqube-axi issue transition <KEY> <accept or falsepositive> -m "motif"`                                    | Transition an issue. Mutation.                                                                            |
 | `sonarqube-axi api <path> [key=value ...] [--method <verb>] [--allow-mutation] [--personal]`                   | Raw SonarQube Web API call, same AXI conventions.                                                         |
+| `sonarqube-axi gain`                                                                                           | Token savings recorded by this CLI: totals and per-command breakdown.                                     |
 | `sonarqube-axi setup [--host <url>] [--insecure or --no-insecure] [--keychain-service <name>] [--clear-cache]` | Configure or inspect the local host/token setup.                                                          |
 
 Run `sonarqube-axi --help` or `sonarqube-axi <command> --help` for exact flags.
@@ -71,6 +72,35 @@ A few behaviors that don't show up from the command names alone:
 - **MR mode vs branch mode.** `qg`/`issues`/`hotspots` default to MR mode when an open MR exists for the current branch (via `glab`), branch mode otherwise. `--mr <IID>` or `--branch` overrides the default; the two modes read different SonarQube resources (pull-request vs branch parameters) and can disagree. Branch mode is also cumulative since the last new-code period, not scoped to one merge request.
 - **Token fallback.** The project CI token can read the quality gate and issues but not hotspots or the compute-engine task status — `hotspots` and `analysis` retry automatically with the personal Keychain token on a 403 (`--personal` does the same on `api`). `hotspot review` and `issue transition` always use the personal token.
 - **Auth scheme fallback.** Every request tries a Bearer token first, then falls back to HTTP Basic (token as login, empty password) on a 401 — needed for SonarQube versions predating Bearer support.
+
+## Token savings
+
+Every invocation that talks to SonarQube appends one line to
+`~/Library/Application Support/axi/sonarqube-axi.jsonl` (XDG data directory elsewhere):
+
+```json
+{
+  "ts": 1788284652,
+  "cli": "sonarqube-axi",
+  "cmd": "hotspots",
+  "raw": 8968,
+  "out": 1574,
+  "ms": 370
+}
+```
+
+`raw` is the token count of the decompressed JSON of every HTTP response of that
+invocation — what an agent would have ingested calling the API itself — and `out` the
+token count of the rendered output. `sonarqube-axi gain` reports the accumulated totals.
+
+- **Only the sub-command name is recorded.** Never arguments, flag values, project keys,
+  URLs or payload fragments; the log holds integers and command names.
+- `AXI_GAIN=0` disables recording entirely.
+- Recording can never fail a command, and never delays its output: the tokenizer is
+  imported after stdout is written, which costs ~80 ms before the process exits.
+- The counts are lower than the [benchmark](#benchmark) below on small payloads: the
+  benchmark's raw baseline is pretty-printed JSON, while the recorder counts the compact
+  bytes the server actually sends.
 
 ## Benchmark
 
