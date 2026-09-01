@@ -89,12 +89,15 @@ Every invocation that talks to SonarQube appends one line to
 }
 ```
 
-`raw` is the token count of the decompressed JSON of every HTTP response of that
-invocation — what an agent would have ingested calling the API itself — and `out` the
+`raw` is the token count of the decompressed JSON of every HTTP response the invocation
+actually used — what an agent would have ingested calling the API itself — and `out` the
 token count of the rendered output. `sonarqube-axi gain` reports the accumulated totals.
 
 - **Only the sub-command name is recorded.** Never arguments, flag values, project keys,
   URLs or payload fragments; the log holds integers and command names.
+- **A response that only triggers a retry is not counted.** The 401 answer before the
+  Basic fallback and the 403 answer before the personal-token fallback are internal
+  round-trips the agent never reads. A failure with no retry behind it stays counted.
 - `AXI_GAIN=0` disables recording entirely.
 - Recording can never fail a command, and never delays its output: the tokenizer is
   imported after stdout is written, which costs ~80 ms before the process exits.
