@@ -88,6 +88,7 @@ describe("cli surface", () => {
       "hotspot",
       "issue",
       "api",
+      "gain",
       "setup",
     ]);
   });
