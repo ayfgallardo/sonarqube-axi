@@ -1,6 +1,7 @@
 import { resolvePersonalToken } from "../auth.js";
 import { loadConfig } from "../config.js";
 import { AxiError } from "../errors.js";
+import { dropRetriedRawBody } from "../gain.js";
 import { resolveMode } from "../mr.js";
 import {
   sonarGet,
@@ -62,6 +63,7 @@ async function fetchHotspots(
     if (!(error instanceof AxiError) || error.code !== "FORBIDDEN") {
       throw error;
     }
+    dropRetriedRawBody();
     const secondToken = await resolvePersonalToken(keychainService);
     const response = await sonarGet<HotspotsSearchResponse>(
       "hotspots/search",

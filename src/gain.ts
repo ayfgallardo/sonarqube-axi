@@ -60,6 +60,15 @@ export function recordRawBody(text: string): void {
   }
 }
 
+/**
+ * Forget the body just recorded: a failure the caller answers with a retry is
+ * an internal round-trip the agent never reads, so counting it inflates `raw`.
+ * A failure with no retry behind it stays counted — the agent would have read it.
+ */
+export function dropRetriedRawBody(): void {
+  rawBodies.pop();
+}
+
 /** Tee the rendered output so it can be counted once the process is done writing. */
 export function gainStdout<T extends { write: (chunk: string) => unknown }>(
   base: T,
