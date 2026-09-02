@@ -75,8 +75,15 @@ export async function gainCommand(): Promise<string> {
   ]);
 }
 
+/**
+ * Reduced rather than `Math.min(...entries.map(…))`: the log is append-only and
+ * unbounded, and spreading a few hundred thousand arguments throws a RangeError.
+ */
 function sinceIso(entries: GainEntry[]): string {
-  const oldest = Math.min(...entries.map((entry) => entry.ts));
+  const oldest = entries.reduce(
+    (min, entry) => (entry.ts < min ? entry.ts : min),
+    Number.POSITIVE_INFINITY,
+  );
   return Number.isFinite(oldest)
     ? new Date(oldest * 1000).toISOString().slice(0, 10)
     : "unknown";

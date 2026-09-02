@@ -224,6 +224,30 @@ describe("gain command", () => {
     expect(output).toContain("aucune invocation enregistrée");
   });
 
+  it("survives a 300,000-line append-only log", async () => {
+    const path = gainLogPath();
+    mkdirSync(join(path, ".."), { recursive: true });
+    const lines: string[] = [];
+    for (let i = 0; i < 300_000; i++) {
+      lines.push(
+        JSON.stringify({
+          ts: 1788280000 + i,
+          cli: "sonarqube-axi",
+          cmd: "qg",
+          raw: 10,
+          out: 5,
+          ms: 1,
+        }),
+      );
+    }
+    writeFileSync(path, `${lines.join("\n")}\n`);
+
+    const output = await gainCommand();
+
+    expect(output).toContain("invocations: 300000");
+    expect(output).toContain("since: 2026-09-01");
+  });
+
   it("totals savings and breaks them down per sub-command", async () => {
     seed([
       {
