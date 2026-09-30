@@ -20,7 +20,8 @@ export function basicAuthHeader(token: string): string {
 export async function resolvePersonalToken(
   service = DEFAULT_KEYCHAIN_SERVICE,
 ): Promise<string> {
-  const found = await keychainToken(service);
+  const found =
+    process.env["SONARQUBE_TOKEN"] || (await keychainToken(service));
 
   if (!found) {
     throw new AxiError(
