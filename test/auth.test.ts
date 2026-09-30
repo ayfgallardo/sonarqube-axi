@@ -45,6 +45,17 @@ describe("auth headers", () => {
 describe("resolvePersonalToken", () => {
   beforeEach(() => {
     execFileMock.mockReset();
+    vi.unstubAllEnvs();
+  });
+
+  it("prefers SONARQUBE_TOKEN over the Keychain", async () => {
+    vi.stubEnv("SONARQUBE_TOKEN", "fake-env-token");
+
+    await expect(resolvePersonalToken("sonar-example")).resolves.toBe(
+      "fake-env-token",
+    );
+
+    expect(execFileMock).not.toHaveBeenCalled();
   });
 
   it("reads the token from the Keychain with the configured service", async () => {
